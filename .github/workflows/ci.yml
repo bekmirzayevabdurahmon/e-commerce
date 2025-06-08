@@ -1,0 +1,30 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repositoriyani yuklash
+        uses: actions/checkout@v4 # Kodni klonlash
+
+      - name: Node.js'ni o'rnatish
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Kerakli Node.js versiyasi
+
+      - name: node_modules papkasini o'rnatish
+        run: npm ci # package-lock.json asosida install qiladi
+
+      - name: Testlarni ishga tushurish
+        run: npm run test # Agar test script bor bo‘lsa, ishlaydi
+
+      - name: Lint'ni ishga tushurish
+        run: npm run lint # Agar lint script bor bo‘lsa
+
+      - name: Build qilish
+        run: npm run build # Agar build script bor bo‘lsa
