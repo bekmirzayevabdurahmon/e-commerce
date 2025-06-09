@@ -11,7 +11,6 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const modules_1 = require("./modules");
 const config_1 = require("@nestjs/config");
-const category_1 = require("./modules/category");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,8 +23,9 @@ exports.AppModule = AppModule = __decorate([
             mongoose_1.MongooseModule.forRoot(process.env.MONGO_URL ? 'mongodb://localhost:27017/electronics_website' : 'mongodb://localhost:27017/electronics_website'),
             modules_1.AuthModule,
             modules_1.UserModule,
-            category_1.CategoryModule,
+            modules_1.CategoryModule,
             modules_1.ProductModule,
+            modules_1.OrderModule,
         ],
     })
 ], AppModule);

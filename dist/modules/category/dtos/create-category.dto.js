@@ -14,6 +14,7 @@ const class_validator_1 = require("class-validator");
 class CreateCategoryDto {
     name;
     categoryId;
+    products;
 }
 exports.CreateCategoryDto = CreateCategoryDto;
 __decorate([
@@ -22,7 +23,12 @@ __decorate([
 ], CreateCategoryDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsMongoId)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateCategoryDto.prototype, "categoryId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], CreateCategoryDto.prototype, "products", void 0);
 //# sourceMappingURL=create-category.dto.js.map

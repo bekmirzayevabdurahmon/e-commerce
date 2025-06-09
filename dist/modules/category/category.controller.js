@@ -24,8 +24,17 @@ let CategoryController = class CategoryController {
     async getAll() {
         return await this.service.getAll();
     }
+    async getById(id) {
+        return await this.service.getOne(id);
+    }
     async create(payload) {
         return await this.service.create(payload);
+    }
+    async update(payload, id) {
+        return await this.service.update(id, payload);
+    }
+    async delete(id) {
+        return await this.service.delete(id);
     }
 };
 exports.CategoryController = CategoryController;
@@ -36,12 +45,34 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "getAll", null);
 __decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CategoryController.prototype, "getById", null);
+__decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [dtos_1.CreateCategoryDto]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "create", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dtos_1.UpdateCategoryDto, String]),
+    __metadata("design:returntype", Promise)
+], CategoryController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CategoryController.prototype, "delete", null);
 exports.CategoryController = CategoryController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [category_service_1.CategoryService])

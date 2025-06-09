@@ -17,10 +17,13 @@ const common_1 = require("@nestjs/common");
 const product_schema_1 = require("./schema/product.schema");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
+const category_1 = require("../category");
 let ProductService = class ProductService {
     productModel;
-    constructor(productModel) {
+    categoryModel;
+    constructor(productModel, categoryModel) {
         this.productModel = productModel;
+        this.categoryModel = categoryModel;
     }
     async getAll() {
         const products = await this.productModel.find().exec();
@@ -30,11 +33,15 @@ let ProductService = class ProductService {
         };
     }
     async create(createProductDto) {
-        const newProduct = new this.productModel(createProductDto);
-        const savedProduct = await newProduct.save();
+        const product = await this.productModel.create({
+            ...createProductDto,
+            categoryId: new mongoose_2.Types.ObjectId(createProductDto.categoryId),
+            sellerId: new mongoose_2.Types.ObjectId(createProductDto.sellerId),
+        });
+        await this.categoryModel.findByIdAndUpdate(createProductDto.categoryId, { $push: { products: product._id } }, { new: true });
         return {
             message: "success ✅",
-            data: savedProduct,
+            data: product,
         };
     }
 };
@@ -42,6 +49,8 @@ exports.ProductService = ProductService;
 exports.ProductService = ProductService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(product_schema_1.Product.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, mongoose_1.InjectModel)(category_1.Category.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model])
 ], ProductService);
 //# sourceMappingURL=product.service.js.map

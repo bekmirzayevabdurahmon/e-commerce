@@ -1,11 +1,11 @@
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, ObjectId, Types } from "mongoose";
 export type ProductDocument = HydratedDocument<Product>;
 export declare class Product {
     name: string;
     description: string;
     price: number;
     brand: string;
-    categoryId: string;
+    categoryId: ObjectId;
     images: string;
     specs: {
         color: string;
@@ -17,14 +17,14 @@ export declare class Product {
         selfieCamera: string;
     };
     stock: number;
-    sellerId: string;
+    sellerId: ObjectId;
 }
 export declare const ProductSchema: import("mongoose").Schema<Product, import("mongoose").Model<Product, any, any, any, import("mongoose").Document<unknown, any, Product, any> & Product & {
-    _id: import("mongoose").Types.ObjectId;
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, Product, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<Product>, {}> & import("mongoose").FlatRecord<Product> & {
-    _id: import("mongoose").Types.ObjectId;
+    _id: Types.ObjectId;
 } & {
     __v: number;
 }>;

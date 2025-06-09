@@ -12,6 +12,7 @@ const product_service_1 = require("./product.service");
 const product_controller_1 = require("./product.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const schema_1 = require("./schema");
+const category_1 = require("../category");
 let ProductModule = class ProductModule {
 };
 exports.ProductModule = ProductModule;
@@ -20,7 +21,8 @@ exports.ProductModule = ProductModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forFeature([
                 { name: schema_1.Product.name, schema: schema_1.ProductSchema }
-            ])
+            ]),
+            category_1.CategoryModule,
         ],
         providers: [product_service_1.ProductService],
         controllers: [product_controller_1.ProductController],

@@ -1,4 +1,5 @@
 export declare class UpdateCategoryDto {
-    name: string;
-    categoryId: string;
+    name?: string;
+    categoryId?: string;
+    products?: string[];
 }

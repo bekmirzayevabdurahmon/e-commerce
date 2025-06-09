@@ -18,6 +18,8 @@ const user_service_1 = require("./user.service");
 const dtos_1 = require("./dtos");
 const update_user_dto_1 = require("./dtos/update-user.dto");
 const find_filter_dto_1 = require("./dtos/find-filter.dto");
+const decorators_1 = require("../../decorators");
+const enums_1 = require("../../enums");
 let UserController = class UserController {
     userService;
     constructor(userService) {
@@ -41,6 +43,8 @@ let UserController = class UserController {
 };
 exports.UserController = UserController;
 __decorate([
+    (0, decorators_1.Protected)(true),
+    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN]),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -48,6 +52,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
 __decorate([
+    (0, decorators_1.Protected)(true),
+    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN]),
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),

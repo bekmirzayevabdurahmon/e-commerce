@@ -1,10 +1,15 @@
-import { IsMongoId, IsString } from "class-validator";
+import { IsOptional, IsString, IsArray } from 'class-validator';
 
 export class UpdateCategoryDto {
-    @IsString()
-    name: string
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-    @IsString()
-    @IsMongoId()
-    categoryId: string
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
+
+  @IsOptional()
+  @IsArray()
+  products?: string[];
 }
