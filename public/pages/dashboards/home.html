@@ -1,43 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - E-commerce Website</title>
-    <link rel="stylesheet" href="../../css/dashboard/home.css">
+  <meta charset="UTF-8">
+  <title>Foydalanuvchi Dashboard | Shopcart</title>
+  <link rel="stylesheet" href="../css/user-dashboard.css">
 </head>
 <body>
-    <div class="background-blur">
-        <div class="blur-circle circle-1"></div>
-        <div class="blur-circle circle-2"></div>
-        <div class="blur-circle circle-3"></div>
-        <div class="blur-circle circle-4"></div>
-        <div class="blur-circle circle-5"></div>
-    </div>
-    <header class="header">
-        <h1 class="logo">E-Shop</h1>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search products...">
-            <button id="searchButton" class="search-button">Search</button>
+  <header class="user-header">
+    <div class="brand">Shopcart</div>
+    <div class="role">Foydalanuvchi</div>
+    <button class="logout-btn" onclick="logout()">Chiqish</button>
+  </header>
+  <main class="user-main">
+    <h1>Mening mahsulotlarim</h1>
+    <section>
+      <h2>Mahsulot qo'shish</h2>
+      <form id="addProductForm" enctype="multipart/form-data">
+        <div class="form-row">
+          <input type="text" name="name" placeholder="Nomi" required>
+          <input type="text" name="description" placeholder="Tavsifi" required>
+          <input type="number" step="0.01" name="price" placeholder="Narxi ($)" required>
+          <input type="text" name="brand" placeholder="Brend" required>
         </div>
-        <nav class="nav">
-            <a href="home.html">Home</a>
-            <a href="cart.html">Cart</a>
-            <a href="profile.html">Profile</a>
-            <a href="#" id="logoutButton">Logout</a>
-        </nav>
-    </header>
-    <main class="main-content">
-        <section class="categories">
-            <h2 class="section-title">Categories</h2>
-            <div id="categoriesList" class="categories-list"></div>
-        </section>
-        <section class="products">
-            <h2 class="section-title">Popular Products</h2>
-            <div id="productsList" class="products-list"></div>
-        </section>
-    </main>
-    <div id="message" class="message"></div>
-    <script src="../../js/dashboard/home.js"></script>
+        <div class="form-row">
+          <select name="categoryId" id="categoryId" required>
+            <option value="">Kategoriyani tanlang</option>
+          </select>
+          <input type="text" name="color" placeholder="Rangi" required>
+          <input type="text" name="ram" placeholder="RAM (masalan, 8GB)" required>
+          <input type="text" name="storage" placeholder="Xotira (masalan, 128GB)" required>
+        </div>
+        <div class="form-row">
+          <input type="text" name="processor" placeholder="Protsessor" required>
+          <input type="text" name="battery" placeholder="Batareya (masalan, 4000mAh)" required>
+          <input type="text" name="camera" placeholder="Kamera (masalan, 48MP)" required>
+          <input type="text" name="selfieCamera" placeholder="Selfie kamera (masalan, 12MP)" required>
+        </div>
+        <div class="form-row">
+          <input type="number" name="stock" placeholder="Zaxira (dona)" min="1" required>
+          <!-- sellerId avtomatik userdan olinadi -->
+          <input type="file" name="images" id="images" multiple accept="image/*" required>
+        </div>
+        <button type="submit" id="add-product-btn">Qo'shish</button>
+      </form>
+    </section>
+    <section>
+      <h2>Mening mahsulotlarim</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rasm</th>
+            <th>Nomi</th>
+            <th>Narxi</th>
+            <th>Kategoriya</th>
+            <th>Soni</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody id="user-products-table"></tbody>
+      </table>
+    </section>
+  </main>
+  <script src="../js/user-dashboard.js"></script>
 </body>
 </html>

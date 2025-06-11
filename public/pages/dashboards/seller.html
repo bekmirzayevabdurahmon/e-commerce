@@ -1,12 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Seller Dashboard | Shopcart</title>
+  <link rel="stylesheet" href="../../css/dashboard/seller.css">
 </head>
 <body>
-    <H1>Helllo</H1>
-    
+  <header class="seller-header">
+    <div class="brand">Shopcart</div>
+    <div class="role">Sotuvchi paneli</div>
+    <button class="logout-btn" onclick="logout()">Chiqish</button>
+  </header>
+  <main class="seller-main">
+    <section class="section-head">
+      <h1>Mening mahsulotlarim</h1>
+      <button class="add-btn" onclick="openProductModal()">+ Yangi mahsulot</button>
+    </section>
+    <section>
+      <table>
+        <thead>
+          <tr>
+            <th>Rasm</th>
+            <th>Nomi</th>
+            <th>Kategoriya</th>
+            <th>Narxi</th>
+            <th>Brend</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody id="seller-products-table"></tbody>
+      </table>
+    </section>
+    <!-- Modal -->
+    <div id="modal-bg" class="modal-bg" onclick="closeModal()"></div>
+    <div id="product-modal" class="modal"></div>
+  </main>
+  <script src="../../js/dashboard/seller.js"></script>
 </body>
 </html>

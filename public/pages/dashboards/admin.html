@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | Shopcart</title>
+  <link rel="stylesheet" href="../../css/dashboard/admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <div class="brand">Shopcart</div>
+    <nav>
+      <button class="nav-btn active" data-tab="stats">Statistika</button>
+      <button class="nav-btn" data-tab="users">Foydalanuvchilar</button>
+      <button class="nav-btn" data-tab="categories">Kategoriyalar</button>
+      <button class="nav-btn" data-tab="products">Mahsulotlar</button>
+    </nav>
+    <button class="logout-btn" onclick="logout()">Chiqish</button>
+  </header>
+  <main class="admin-main">
+    <!-- Statistika -->
+    <section id="tab-stats" class="tab-content active">
+      <h1>Statistika</h1>
+      <div class="admin-stats">
+        <div>
+          <h2>Mahsulotlar soni</h2>
+          <p id="admin-total-products">0</p>
+        </div>
+        <div>
+          <h2>Foydalanuvchilar soni</h2>
+          <p id="admin-total-users">0</p>
+        </div>
+        <div>
+          <h2>Kategoriyalar soni</h2>
+          <p id="admin-total-categories">0</p>
+        </div>
+        <div>
+          <h2>Buyurtmalar soni</h2>
+          <p id="admin-total-orders">0</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Users CRUD -->
+    <section id="tab-users" class="tab-content">
+      <div class="section-head">
+        <h1>Foydalanuvchilar</h1>
+        <button class="add-btn" onclick="openUserModal()">+ Yangi foydalanuvchi</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Ism</th><th>Email</th><th>Rol</th><th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody id="admin-users-table"></tbody>
+      </table>
+    </section>
+
+    <!-- Categories CRUD -->
+    <section id="tab-categories" class="tab-content">
+      <div class="section-head">
+        <h1>Kategoriyalar</h1>
+        <button class="add-btn" onclick="openCategoryModal()">+ Yangi kategoriya</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Nomi</th><th>Mahsulotlar soni</th><th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody id="admin-categories-table"></tbody>
+      </table>
+    </section>
+
+    <!-- Products CRUD -->
+    <section id="tab-products" class="tab-content">
+      <div class="section-head">
+        <h1>Mahsulotlar</h1>
+        <button class="add-btn" onclick="openProductModal()">+ Yangi mahsulot</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Rasm</th>
+            <th>Nomi</th>
+            <th>Kategoriya</th>
+            <th>Narxi</th>
+            <th>Brend</th>
+            <th>Amallar</th>
+          </tr>
+        </thead>
+        <tbody id="admin-products-table"></tbody>
+      </table>
+    </section>
+
+    <!-- Modal dialogs (User, Category, Product) -->
+    <div id="modal-bg" class="modal-bg" onclick="closeModal()"></div>
+    <div id="user-modal" class="modal"></div>
+    <div id="category-modal" class="modal"></div>
+    <div id="product-modal" class="modal"></div>
+  </main>
+  <script src="../../js/dashboard/admin.js"></script>
+</body>
+</html>

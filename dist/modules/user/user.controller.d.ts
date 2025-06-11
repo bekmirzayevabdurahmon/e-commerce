@@ -37,6 +37,20 @@ export declare class UserController {
             _id: import("mongoose").Types.ObjectId;
         }>)[];
     }>;
+    getMe(req: any): Promise<{
+        message: string;
+        data: import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, import("./schema").User, {}> & import("./schema").User & {
+            _id: import("mongoose").Types.ObjectId;
+        } & {
+            __v: number;
+        }, {}> & import("mongoose").Document<unknown, {}, import("./schema").User, {}> & import("./schema").User & {
+            _id: import("mongoose").Types.ObjectId;
+        } & {
+            __v: number;
+        } & Required<{
+            _id: import("mongoose").Types.ObjectId;
+        }>;
+    }>;
     findOne(id: string): Promise<{
         message: string;
         data: import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, import("./schema").User, {}> & import("./schema").User & {

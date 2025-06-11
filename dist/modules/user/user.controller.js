@@ -30,6 +30,9 @@ let UserController = class UserController {
     async findAll(query) {
         return this.userService.findAll(query);
     }
+    async getMe(req) {
+        return this.userService.findById(req.user._id);
+    }
     async findOne(id) {
         return this.userService.findById(id);
     }
@@ -67,6 +70,17 @@ __decorate([
     __metadata("design:paramtypes", [dtos_1.FindUserDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('me'),
+    (0, decorators_1.Protected)(true),
+    (0, decorators_1.Roles)([enums_1.UserRole.USER, enums_1.UserRole.SELLER, enums_1.UserRole.ADMIN]),
+    (0, swagger_1.ApiOperation)({ summary: 'Hozirgi avtorizatsiyalangan foydalanuvchi maʼlumotlari' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Foydalanuvchining o‘zi', type: dtos_1.CreateUserDto }),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getMe", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, decorators_1.Protected)(true),

@@ -1,7 +1,7 @@
-import { Controller, Post, Get, Patch, Delete, Param, Body, Query } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Param, Body, Query, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto, FindUserDto } from './dtos';
-import { Protected, Roles } from 'src/decorators';
+import {  Protected, Roles } from 'src/decorators';
 import { UserRole } from 'src/enums';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 
@@ -31,6 +31,16 @@ export class UserController {
   @ApiResponse({ status: 403, description: 'Ruxsat yo‘q (faqat admin uchun).' })
   async findAll(@Query() query: FindUserDto) {
     return this.userService.findAll(query);
+  }
+
+  // --- /users/me endpoint har doim /users/:id dan YUQORIDA turishi shart! ---
+  @Get('me')
+  @Protected(true)
+  @Roles([UserRole.USER, UserRole.SELLER, UserRole.ADMIN])
+  @ApiOperation({ summary: 'Hozirgi avtorizatsiyalangan foydalanuvchi maʼlumotlari' })
+  @ApiResponse({ status: 200, description: 'Foydalanuvchining o‘zi', type: CreateUserDto })
+  async getMe(@Req() req) {
+    return this.userService.findById(req.user._id);
   }
 
   @Get(':id')
