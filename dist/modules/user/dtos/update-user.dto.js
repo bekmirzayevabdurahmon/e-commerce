@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateUserDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 const enums_1 = require("../../../enums");
 class UpdateUserDto {
     name;
@@ -23,21 +24,37 @@ class UpdateUserDto {
 }
 exports.UpdateUserDto = UpdateUserDto;
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Foydalanuvchi ismi (ixtiyoriy)',
+        example: 'Vali',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "name", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Foydalanuvchi elektron pochta manzili (ixtiyoriy)',
+        example: 'vali@example.com',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "email", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Foydalanuvchi telefon raqami (ixtiyoriy)',
+        example: '+998901234567',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "phoneNumber", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Foydalanuvchi paroli (6-14 belgidan iborat, ixtiyoriy)',
+        example: 'newpassword123',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(6),
@@ -45,16 +62,29 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "password", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Foydalanuvchi roli (ixtiyoriy)',
+        enum: enums_1.UserRole,
+        example: enums_1.UserRole.ADMIN,
+    }),
     (0, class_validator_1.IsEnum)(enums_1.UserRole),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "role", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Kompaniya nomi (ixtiyoriy)',
+        example: 'Tech Solutions',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "companyName", void 0);
 __decorate([
+    (0, swagger_1.ApiPropertyOptional)({
+        description: 'Foydalanuvchi tasdiqlanganligi (ixtiyoriy)',
+        example: true,
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)

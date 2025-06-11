@@ -1,12 +1,17 @@
-import { SpecsDto } from './create-product.dto';
 export declare class UpdateProductDto {
     name?: string;
     description?: string;
     price?: number;
     brand?: string;
     categoryId?: string;
-    images?: string[];
-    specs?: SpecsDto;
+    color?: string;
+    ram?: string;
+    storage?: string;
+    processor?: string;
+    battery?: string;
+    camera?: string;
+    selfieCamera?: string;
     stock?: number;
     sellerId?: string;
+    images?: string[];
 }

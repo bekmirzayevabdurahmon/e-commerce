@@ -1,84 +1,68 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsNumber, IsArray, IsObject, IsPositive, ArrayMinSize, ArrayMaxSize } from 'class-validator';
-
-export class SpecsDto {
-  @ApiProperty({ example: 'Qora', description: 'Mahsulot rangi' })
-  @IsString()
-  @IsNotEmpty()
-  color: string;
-
-  @ApiProperty({ example: '8GB', description: 'Mahsulot RAM hajmi' })
-  @IsString()
-  @IsNotEmpty()
-  ram: string;
-
-  @ApiProperty({ example: '256GB', description: 'Mahsulot xotira hajmi' })
-  @IsString()
-  @IsNotEmpty()
-  storage: string;
-
-  @ApiProperty({ example: 'Snapdragon 8 Gen 1', description: 'Mahsulot protsessori' })
-  @IsString()
-  @IsNotEmpty()
-  processor: string;
-
-  @ApiProperty({ example: '5000mAh', description: 'Mahsulot batareya quvvati' })
-  @IsString()
-  @IsNotEmpty()
-  battery: string;
-
-  @ApiProperty({ example: '48MP', description: 'Asosiy kamera xususiyatlari' })
-  @IsString()
-  @IsNotEmpty()
-  camera: string;
-
-  @ApiProperty({ example: '12MP', description: 'Selfi kamera xususiyatlari' })
-  @IsString()
-  @IsNotEmpty()
-  selfieCamera: string;
-}
+import { IsString, IsMongoId, IsNumber, IsArray, IsOptional } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 
 export class CreateProductDto {
-  @ApiProperty({ example: 'Smartphone XYZ', description: 'Mahsulot nomi' })
-  @IsString()
-  @IsNotEmpty()
-  name: string;
+    @ApiProperty({ description: "Product name", example: "Smartphone X" })
+    @IsString()
+    name: string;
 
-  @ApiProperty({ example: 'Yuqori sifatli smartfon', description: 'Mahsulot tavsifi' })
-  @IsString()
-  @IsNotEmpty()
-  description: string;
+    @ApiProperty({ description: "Product description", example: "A high-end smartphone" })
+    @IsString()
+    description: string;
 
-  @ApiProperty({ example: 599.99, description: 'Mahsulot narxi (USD)' })
-  @IsNumber()
-  @IsPositive()
-  price: number;
+    @ApiProperty({ description: "Product price", example: 599.99 })
+    @IsNumber()
+    @Type(() => Number)
+    price: number;
 
-  @ApiProperty({ example: 'BrandX', description: 'Mahsulot brendi' })
-  @IsString()
-  @IsNotEmpty()
-  brand: string;
+    @ApiProperty({ description: "Product brand", example: "BrandX" })
+    @IsString()
+    brand: string;
 
-  @ApiProperty({ example: 'category123', description: 'Mahsulot kategoriyasi IDsi' })
-  @IsString()
-  @IsNotEmpty()
-  categoryId: string;
+    @ApiProperty({ description: "Category ID", example: "60f7b1a2c3d4e5f67890abcd" })
+    @IsMongoId()
+    categoryId: string;
 
-  @ApiProperty({ example: 'image.jpg', description: 'Mahsulot rasmlari URLlari' })
-  @IsString()
-  images: string;
+    @ApiProperty({ description: "Product color", example: "Black" })
+    @IsString()
+    color: string;
 
-  @ApiProperty({ type: SpecsDto, description: 'Mahsulot spetsifikatsiyalari' })
-  @IsObject()
-  specs: SpecsDto;
+    @ApiProperty({ description: "Product RAM", example: "8GB" })
+    @IsString()
+    ram: string;
 
-  @ApiProperty({ example: 100, description: 'Mahsulot zaxirasi miqdori' })
-  @IsNumber()
-  @IsPositive()
-  stock: number;
+    @ApiProperty({ description: "Product storage", example: "128GB" })
+    @IsString()
+    storage: string;
 
-  @ApiProperty({ example: 'seller123', description: 'Sotuvchi IDsi' })
-  @IsString()
-  @IsNotEmpty()
-  sellerId: string;
-};
+    @ApiProperty({ description: "Product processor", example: "Octa-core" })
+    @IsString()
+    processor: string;
+
+    @ApiProperty({ description: "Product battery", example: "4000mAh" })
+    @IsString()
+    battery: string;
+
+    @ApiProperty({ description: "Product camera", example: "48MP" })
+    @IsString()
+    camera: string;
+
+    @ApiProperty({ description: "Product selfie camera", example: "12MP" })
+    @IsString()
+    selfieCamera: string;
+
+    @ApiProperty({ description: "Product stock quantity", example: 100 })
+    @IsNumber()
+    @Type(() => Number)
+    stock: number;
+
+    @ApiProperty({ description: "Seller ID", example: "60f7b1a2c3d4e5f67890abcd" })
+    @IsMongoId()
+    sellerId: string;
+
+    @ApiProperty({ description: "Array of image filenames", type: [String], example: ["image1.jpg", "image2.jpg"], required: false })
+    @IsArray()
+    @IsOptional()
+    images?: string[];
+}

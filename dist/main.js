@@ -8,8 +8,8 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
-        forbidNonWhitelisted: true,
         transform: true,
+        forbidNonWhitelisted: true,
     }));
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Ecommerce Electronics API')

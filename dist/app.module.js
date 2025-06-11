@@ -11,6 +11,8 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const modules_1 = require("./modules");
 const config_1 = require("@nestjs/config");
+const serve_static_1 = require("@nestjs/serve-static");
+const path_1 = require("path");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -21,6 +23,13 @@ exports.AppModule = AppModule = __decorate([
                 isGlobal: true,
             }),
             mongoose_1.MongooseModule.forRoot(process.env.MONGO_URL ? 'mongodb://localhost:27017/electronics_website' : 'mongodb://localhost:27017/electronics_website'),
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(__dirname, '..', 'public'),
+                renderPath: '/',
+            }, {
+                rootPath: (0, path_1.join)(__dirname, '..', 'uploads'),
+                renderPath: '/uploads',
+            }),
             modules_1.AuthModule,
             modules_1.UserModule,
             modules_1.CategoryModule,

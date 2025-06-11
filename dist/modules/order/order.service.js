@@ -17,71 +17,133 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const schema_1 = require("./schema");
+const schema_2 = require("../product/schema");
 let OrderService = class OrderService {
     orderModel;
-    constructor(orderModel) {
+    productModel;
+    constructor(orderModel, productModel) {
         this.orderModel = orderModel;
+        this.productModel = productModel;
     }
     async create(createOrderDto) {
         try {
-            const order = await this.orderModel.create(createOrderDto);
+            let totalPrice = 0;
+            const products = [];
+            for (const item of createOrderDto.products) {
+                const product = await this.productModel.findById(item.productId).exec();
+                if (!product) {
+                    throw new common_1.NotFoundException(`Mahsulot topilmadi: ${item.productId} ❌`);
+                }
+                if (product.stock < item.quantity) {
+                    throw new common_1.BadRequestException(`Mahsulot zaxirasi yetarli emas: ${product.name} (Zaxira: ${product.stock}, Talab: ${item.quantity}) ❌`);
+                }
+                totalPrice += product.price * item.quantity;
+                products.push({
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    price: product.price,
+                });
+                product.stock -= item.quantity;
+                await product.save();
+            }
+            const orderData = {
+                ...createOrderDto,
+                products,
+                totalPrice,
+            };
+            const order = await this.orderModel.create(orderData);
             return {
-                message: 'Order created successfully ✅',
+                message: 'Buyurtma muvaffaqiyatli yaratildi ✅',
                 data: order,
             };
         }
         catch (error) {
-            throw new common_1.BadRequestException(`Failed to create order: ${error.message}`);
+            throw new common_1.BadRequestException(`Buyurtma yaratishda xatolik: ${error.message}`);
         }
     }
     async getAll() {
         const orders = await this.orderModel.find().exec();
         return {
-            message: 'success ✅',
+            message: 'Muvaffaqiyatli ✅',
             data: orders,
             total: orders.length,
         };
     }
     async getOne(id) {
         if (!mongoose_2.Types.ObjectId.isValid(id)) {
-            throw new common_1.BadRequestException('Invalid order ID ❌');
+            throw new common_1.BadRequestException('Noto‘g‘ri buyurtma ID si ❌');
         }
         const order = await this.orderModel.findById(id).exec();
         if (!order) {
-            throw new common_1.NotFoundException('Order not found ❌');
+            throw new common_1.NotFoundException('Buyurtma topilmadi ❌');
         }
         return {
-            message: 'success ✅',
+            message: 'Muvaffaqiyatli ✅',
             data: order,
         };
     }
     async update(id, updateOrderDto) {
         if (!mongoose_2.Types.ObjectId.isValid(id)) {
-            throw new common_1.BadRequestException('Invalid order ID ❌');
+            throw new common_1.BadRequestException('Noto‘g‘ri buyurtma ID si ❌');
         }
-        const order = await this.orderModel
-            .findByIdAndUpdate(id, { $set: updateOrderDto }, { new: true, runValidators: true })
-            .select('-__v')
-            .lean()
-            .exec();
-        if (!order) {
-            throw new common_1.NotFoundException('Order not found ❌');
+        try {
+            let order = await this.orderModel.findById(id).exec();
+            if (!order) {
+                throw new common_1.NotFoundException('Buyurtma topilmadi ❌');
+            }
+            let totalPrice = order.totalPrice;
+            const updateData = { ...updateOrderDto };
+            if (updateOrderDto.products) {
+                totalPrice = 0;
+                const products = [];
+                for (const item of order.products) {
+                    const product = await this.productModel.findById(item.productId).exec();
+                    if (product) {
+                        product.stock += item.quantity;
+                        await product.save();
+                    }
+                }
+                for (const item of updateOrderDto.products) {
+                    const product = await this.productModel.findById(item.productId).exec();
+                    if (!product) {
+                        throw new common_1.NotFoundException(`Mahsulot topilmadi: ${item.productId} ❌`);
+                    }
+                    if (product.stock < item.quantity) {
+                        throw new common_1.BadRequestException(`Mahsulot zaxirasi yetarli emas: ${product.name} (Zaxira: ${product.stock}, Talab: ${item.quantity}) ❌`);
+                    }
+                    totalPrice += product.price * item.quantity;
+                    products.push({
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        price: product.price,
+                    });
+                    product.stock -= item.quantity;
+                    await product.save();
+                }
+                updateData.products = products;
+            }
+            order = await this.orderModel
+                .findByIdAndUpdate(id, { $set: { ...updateData, totalPrice } }, { new: true, runValidators: true })
+                .exec();
+            return {
+                message: 'Buyurtma muvaffaqiyatli yangilandi ✅',
+                data: order,
+            };
         }
-        return {
-            message: 'Order updated successfully ✅',
-            data: order,
-        };
+        catch (error) {
+            throw new common_1.BadRequestException(`Buyurtma yangilashda xatolik: ${error.message}`);
+        }
     }
     async delete(id) {
         if (!mongoose_2.Types.ObjectId.isValid(id)) {
-            throw new common_1.BadRequestException('Invalid order ID ❌');
+            throw new common_1.BadRequestException('Noto‘g‘ri buyurtma ID si ❌');
         }
         const order = await this.orderModel.findByIdAndDelete(id).exec();
         if (!order) {
-            throw new common_1.NotFoundException('Order not found ❌');
+            throw new common_1.NotFoundException('Buyurtma topilmadi ❌');
         }
         return {
-            message: 'Order deleted successfully ✅',
+            message: 'Buyurtma muvaffaqiyatli o‘chirildi ✅',
         };
     }
 };
@@ -89,6 +151,8 @@ exports.OrderService = OrderService;
 exports.OrderService = OrderService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(schema_1.Order.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, mongoose_1.InjectModel)(schema_2.Product.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model])
 ], OrderService);
 //# sourceMappingURL=order.service.js.map

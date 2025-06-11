@@ -26,6 +26,7 @@ exports.ProductModule = ProductModule = __decorate([
         ],
         providers: [product_service_1.ProductService],
         controllers: [product_controller_1.ProductController],
+        exports: [mongoose_1.MongooseModule]
     })
 ], ProductModule);
 //# sourceMappingURL=product.module.js.map

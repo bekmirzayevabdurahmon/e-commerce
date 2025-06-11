@@ -1,4 +1,4 @@
-import { UserRole } from "src/enums";
+import { UserRole } from 'src/enums';
 export declare class CreateUserDto {
     name: string;
     email: string;

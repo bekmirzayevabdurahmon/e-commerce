@@ -1,61 +1,43 @@
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { Order, OrderDocument } from './schema';
+import { ProductDocument } from '../product/schema';
 import { CreateOrderDto, UpdateOrderDto } from './dtos';
 export declare class OrderService {
-    private orderModel;
-    constructor(orderModel: Model<OrderDocument>);
+    private readonly orderModel;
+    private productModel;
+    constructor(orderModel: Model<OrderDocument>, productModel: Model<ProductDocument>);
     create(createOrderDto: CreateOrderDto): Promise<{
         message: string;
-        data: import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, Order, {}> & Order & {
-            _id: Types.ObjectId;
-        } & {
+        data: import("mongoose").Document<unknown, {}, OrderDocument, {}> & Order & import("mongoose").Document<unknown, any, any, Record<string, any>> & Required<{
+            _id: unknown;
+        }> & {
             __v: number;
-        }, {}> & import("mongoose").Document<unknown, {}, Order, {}> & Order & {
-            _id: Types.ObjectId;
-        } & {
-            __v: number;
-        } & Required<{
-            _id: Types.ObjectId;
-        }>;
+        };
     }>;
     getAll(): Promise<{
         message: string;
-        data: (import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, Order, {}> & Order & {
-            _id: Types.ObjectId;
-        } & {
+        data: (import("mongoose").Document<unknown, {}, OrderDocument, {}> & Order & import("mongoose").Document<unknown, any, any, Record<string, any>> & Required<{
+            _id: unknown;
+        }> & {
             __v: number;
-        }, {}> & import("mongoose").Document<unknown, {}, Order, {}> & Order & {
-            _id: Types.ObjectId;
-        } & {
-            __v: number;
-        } & Required<{
-            _id: Types.ObjectId;
-        }>)[];
+        })[];
         total: number;
     }>;
     getOne(id: string): Promise<{
         message: string;
-        data: import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, Order, {}> & Order & {
-            _id: Types.ObjectId;
-        } & {
+        data: import("mongoose").Document<unknown, {}, OrderDocument, {}> & Order & import("mongoose").Document<unknown, any, any, Record<string, any>> & Required<{
+            _id: unknown;
+        }> & {
             __v: number;
-        }, {}> & import("mongoose").Document<unknown, {}, Order, {}> & Order & {
-            _id: Types.ObjectId;
-        } & {
-            __v: number;
-        } & Required<{
-            _id: Types.ObjectId;
-        }>;
+        };
     }>;
     update(id: string, updateOrderDto: UpdateOrderDto): Promise<{
         message: string;
-        data: import("mongoose").FlattenMaps<import("mongoose").Document<unknown, {}, Order, {}> & Order & {
-            _id: Types.ObjectId;
-        } & {
+        data: (import("mongoose").Document<unknown, {}, OrderDocument, {}> & Order & import("mongoose").Document<unknown, any, any, Record<string, any>> & Required<{
+            _id: unknown;
+        }> & {
             __v: number;
-        }> & Required<{
-            _id: Types.ObjectId;
-        }>;
+        }) | null;
     }>;
     delete(id: string): Promise<{
         message: string;

@@ -6,16 +6,14 @@ export declare class Product {
     price: number;
     brand: string;
     categoryId: ObjectId;
-    images: string;
-    specs: {
-        color: string;
-        ram: string;
-        storage: string;
-        processor: string;
-        battery: string;
-        camera: string;
-        selfieCamera: string;
-    };
+    images: string[];
+    color: string;
+    ram: string;
+    storage: string;
+    processor: string;
+    battery: string;
+    camera: string;
+    selfieCamera: string;
     stock: number;
     sellerId: ObjectId;
 }

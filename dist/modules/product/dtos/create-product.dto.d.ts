@@ -1,4 +1,9 @@
-export declare class SpecsDto {
+export declare class CreateProductDto {
+    name: string;
+    description: string;
+    price: number;
+    brand: string;
+    categoryId: string;
     color: string;
     ram: string;
     storage: string;
@@ -6,15 +11,7 @@ export declare class SpecsDto {
     battery: string;
     camera: string;
     selfieCamera: string;
-}
-export declare class CreateProductDto {
-    name: string;
-    description: string;
-    price: number;
-    brand: string;
-    categoryId: string;
-    images: string;
-    specs: SpecsDto;
     stock: number;
     sellerId: string;
+    images?: string[];
 }

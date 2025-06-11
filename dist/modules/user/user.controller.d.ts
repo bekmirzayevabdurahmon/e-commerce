@@ -1,7 +1,5 @@
-import { UserService } from "./user.service";
-import { CreateUserDto } from "./dtos";
-import { UpdateUserDto } from "./dtos/update-user.dto";
-import { FindUserDto } from "./dtos/find-filter.dto";
+import { UserService } from './user.service';
+import { CreateUserDto, UpdateUserDto, FindUserDto } from './dtos';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);

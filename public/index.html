@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Elite</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">eTrade</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/products">Products</a>
+                <a href="/categories">Categories</a>
+            </div>
+            <form class="search-form" role="search">
+                <input type="search" id="searchInput" placeholder="Search products..." aria-label="Search">
+                <button type="submit">Search</button>
+            </form>
+            <div class="auth-links">
+                <a href="./pages/auth/login.html">Login</a>
+                <a href="./pages/auth/register.html">Register</a>
+                <button id="themeToggle" class="theme-toggle">Toggle Theme</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner Carousel -->
+    <div class="banner-container">
+        <div class="banner-slider" id="bannerSlider">
+            <div class="banner-slide">
+                <img src="/images/banner1.jpg" alt="Deal of the Week">
+                <div class="banner-caption">
+                    <h2>Roco Wireless Headphone</h2>
+                    <p class="price">$99.00</p>
+                    <a href="#" class="shop-now">Shop Now</a>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="/images/banner2.jpg" alt="Special Offer">
+                <div class="banner-caption">
+                    <h2>Enhance Your Music</h2>
+                    <a href="#" class="shop-now">Check It Out</a>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="/images/banner3.jpg" alt="New Arrival">
+                <div class="banner-caption">
+                    <h2>Latest Tech Gadgets</h2>
+                    <a href="#" class="shop-now">Explore Now</a>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="/images/banner4.jpg" alt="Seasonal Sale">
+                <div class="banner-caption">
+                    <h2>Up to 50% Off</h2>
+                    <a href="#" class="shop-now">Shop Sale</a>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="/images/banner5.jpg" alt="Exclusive Deal">
+                <div class="banner-caption">
+                    <h2>Premium Headsets</h2>
+                    <a href="#" class="shop-now">Get Now</a>
+                </div>
+            </div>
+        </div>
+        <button class="slider-prev" id="prevSlide">❮</button>
+        <button class="slider-next" id="nextSlide">❯</button>
+    </div>
+
+    <!-- Featured Products -->
+    <div class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="products-grid" id="product-list">
+            <!-- Products will be loaded dynamically -->
+        </div>
+    </div>
+    <!-- 80-qator atrofida mahsulotlarni yuklash -->
+    <script>
+        async function loadProducts() {
+            try {
+                const response = await fetch('http://localhost:3000/products');
+                const data = await response.json();
+                const productList = document.getElementById('product-list');
+                productList.innerHTML = ''; // Oldingi kontentni tozalash
+
+                if (data.data && data.data.length > 0) {
+                    data.data.forEach(product => {
+                        const card = document.createElement('div');
+                        card.className = 'product-card';
+                        const imageUrl = product.images && product.images.length > 0
+                            ? `/uploads/products-images/${product._id}/${product.images[0]}`
+                            : '/images/default.jpg';
+                            console.log(imageUrl)
+                        card.innerHTML = `
+                            <a href="/product.html?id=${product._id}">
+                                <img src="${imageUrl}" alt="${product.name || 'Product'}">
+                                <h3>${product.name || 'Unnamed Product'}</h3>
+                                <p class="price">$${product.price?.toFixed(2) || '0.00'}</p>
+                            </a>
+                        `;
+                        productList.appendChild(card);
+                    });
+                } else {
+                    productList.innerHTML = '<div class="product-card"><p>No products available</p></div>';
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('product-list').innerHTML = '<div class="product-card"><p>Error loading products</p></div>';
+            }
+        }
+
+        // Sahifa yuklanganda mahsulotlarni yuklash
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+    <!-- 80-qator atrofida mahsulotlarni yuklash tugadi -->
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 eTrade Inc. All rights reserved.</p>
+    </footer>
+
+    <script src="./js/scripts.js"></script>
+</body>
+</html>

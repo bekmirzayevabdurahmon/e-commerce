@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - E-commerce Website</title>
+    <link rel="stylesheet" href="../../css/dashboard/home.css">
+</head>
+<body>
+    <div class="background-blur">
+        <div class="blur-circle circle-1"></div>
+        <div class="blur-circle circle-2"></div>
+        <div class="blur-circle circle-3"></div>
+        <div class="blur-circle circle-4"></div>
+        <div class="blur-circle circle-5"></div>
+    </div>
+    <header class="header">
+        <h1 class="logo">E-Shop</h1>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search products...">
+            <button id="searchButton" class="search-button">Search</button>
+        </div>
+        <nav class="nav">
+            <a href="home.html">Home</a>
+            <a href="cart.html">Cart</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" id="logoutButton">Logout</a>
+        </nav>
+    </header>
+    <main class="main-content">
+        <section class="categories">
+            <h2 class="section-title">Categories</h2>
+            <div id="categoriesList" class="categories-list"></div>
+        </section>
+        <section class="products">
+            <h2 class="section-title">Popular Products</h2>
+            <div id="productsList" class="products-list"></div>
+        </section>
+    </main>
+    <div id="message" class="message"></div>
+    <script src="../../js/dashboard/home.js"></script>
+</body>
+</html>

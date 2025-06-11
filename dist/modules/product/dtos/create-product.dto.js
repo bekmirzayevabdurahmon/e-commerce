@@ -9,10 +9,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateProductDto = exports.SpecsDto = void 0;
-const swagger_1 = require("@nestjs/swagger");
+exports.CreateProductDto = void 0;
 const class_validator_1 = require("class-validator");
-class SpecsDto {
+const swagger_1 = require("@nestjs/swagger");
+const class_transformer_1 = require("class-transformer");
+class CreateProductDto {
+    name;
+    description;
+    price;
+    brand;
+    categoryId;
     color;
     ram;
     storage;
@@ -20,113 +26,87 @@ class SpecsDto {
     battery;
     camera;
     selfieCamera;
-}
-exports.SpecsDto = SpecsDto;
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Qora', description: 'Mahsulot rangi' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SpecsDto.prototype, "color", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '8GB', description: 'Mahsulot RAM hajmi' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SpecsDto.prototype, "ram", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '256GB', description: 'Mahsulot xotira hajmi' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SpecsDto.prototype, "storage", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Snapdragon 8 Gen 1', description: 'Mahsulot protsessori' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SpecsDto.prototype, "processor", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '5000mAh', description: 'Mahsulot batareya quvvati' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SpecsDto.prototype, "battery", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '48MP', description: 'Asosiy kamera xususiyatlari' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SpecsDto.prototype, "camera", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: '12MP', description: 'Selfi kamera xususiyatlari' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], SpecsDto.prototype, "selfieCamera", void 0);
-class CreateProductDto {
-    name;
-    description;
-    price;
-    brand;
-    categoryId;
-    images;
-    specs;
     stock;
     sellerId;
+    images;
 }
 exports.CreateProductDto = CreateProductDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Smartphone XYZ', description: 'Mahsulot nomi' }),
+    (0, swagger_1.ApiProperty)({ description: "Product name", example: "Smartphone X" }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "name", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Yuqori sifatli smartfon', description: 'Mahsulot tavsifi' }),
+    (0, swagger_1.ApiProperty)({ description: "Product description", example: "A high-end smartphone" }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "description", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 599.99, description: 'Mahsulot narxi (USD)' }),
+    (0, swagger_1.ApiProperty)({ description: "Product price", example: 599.99 }),
     (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsPositive)(),
+    (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "price", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'BrandX', description: 'Mahsulot brendi' }),
+    (0, swagger_1.ApiProperty)({ description: "Product brand", example: "BrandX" }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "brand", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'category123', description: 'Mahsulot kategoriyasi IDsi' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)({ description: "Category ID", example: "60f7b1a2c3d4e5f67890abcd" }),
+    (0, class_validator_1.IsMongoId)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "categoryId", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'image.jpg', description: 'Mahsulot rasmlari URLlari' }),
+    (0, swagger_1.ApiProperty)({ description: "Product color", example: "Black" }),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateProductDto.prototype, "images", void 0);
+], CreateProductDto.prototype, "color", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ type: SpecsDto, description: 'Mahsulot spetsifikatsiyalari' }),
-    (0, class_validator_1.IsObject)(),
-    __metadata("design:type", SpecsDto)
-], CreateProductDto.prototype, "specs", void 0);
+    (0, swagger_1.ApiProperty)({ description: "Product RAM", example: "8GB" }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "ram", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 100, description: 'Mahsulot zaxirasi miqdori' }),
+    (0, swagger_1.ApiProperty)({ description: "Product storage", example: "128GB" }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "storage", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Product processor", example: "Octa-core" }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "processor", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Product battery", example: "4000mAh" }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "battery", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Product camera", example: "48MP" }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "camera", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Product selfie camera", example: "12MP" }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateProductDto.prototype, "selfieCamera", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Product stock quantity", example: 100 }),
     (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsPositive)(),
+    (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Number)
 ], CreateProductDto.prototype, "stock", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'seller123', description: 'Sotuvchi IDsi' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)({ description: "Seller ID", example: "60f7b1a2c3d4e5f67890abcd" }),
+    (0, class_validator_1.IsMongoId)(),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "sellerId", void 0);
-;
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Array of image filenames", type: [String], example: ["image1.jpg", "image2.jpg"], required: false }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateProductDto.prototype, "images", void 0);
 //# sourceMappingURL=create-product.dto.js.map

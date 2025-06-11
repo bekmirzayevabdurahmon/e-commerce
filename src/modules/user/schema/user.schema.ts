@@ -21,7 +21,7 @@ export class User {
   @Prop({ enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @Prop()
+  @Prop({ default: null })
   companyName?: string;
 
   @Prop({ default: false })

@@ -1,22 +1,31 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { OrderStatus } from 'src/enums';
 
-export type OrderDocument = HydratedDocument<Order>;
+export type OrderDocument = Order & Document;
 
-@Schema({ timestamps: true }) 
+@Schema({ timestamps: true })
 export class Order {
-  @Prop({ required: true, type: String }) 
-  userId: string;
+  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
-  @Prop({ required: true, type: String }) 
-  products: string;
+  @Prop({
+    required: true,
+    type: [
+      {
+        productId: { type: Types.ObjectId, ref: 'Product', required: true },
+        quantity: { type: Number, required: true },
+        price: { type: Number, required: true },
+      },
+    ],
+  })
+  products: { productId: Types.ObjectId; quantity: number; price: number }[];
 
-  @Prop({ required: true, type: Number })
+  @Prop({ required: true, enum: OrderStatus })
+  status: OrderStatus;
+
+  @Prop({ required: true })
   totalPrice: number;
-
-  @Prop({ required: true, type: String, default: 'pending' })
-  status: string;
-
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
