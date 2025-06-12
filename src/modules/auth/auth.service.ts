@@ -2,19 +2,24 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { User, UserDocument } from '../user';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { LoginDto, RegisterDto } from './dtos';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
+    private configService: ConfigService, // DI qilib oling
   ) {}
 
   async register(payload: RegisterDto) {
@@ -119,6 +124,58 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Refresh token expired or invalid');
     }
+  }
+
+  async forgetPassword(email: string) {
+    const user = await this.userModel.findOne({ email });
+    if (!user) throw new NotFoundException('User not found');
+
+    // Token 30 daqiqa amal qiladi
+    const token = this.jwtService.sign(
+      { id: user.id, email: user.email },
+      { expiresIn: '30m' }
+    );
+
+    // Reset link
+    const frontendUrl =
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const resetLink = `${frontendUrl}/pages/auth/reset-password.html?token=${token}`;
+
+    const transporter = nodemailer.createTransport({
+      host: this.configService.get<string>('EMAIL_HOST'),
+      port: Number(this.configService.get<string>('EMAIL_PORT')),
+      secure: Number(this.configService.get<string>('EMAIL_PORT')) === 465, 
+      auth: {
+        user: this.configService.get<string>('EMAIL_USER'),
+        pass: this.configService.get<string>('EMAIL_PASS'),
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"E-commerce" <${this.configService.get<string>('EMAIL_USER')}>`,
+      to: user.email,
+      subject: 'Parolni tiklash',
+      html: `<p>Parolni tiklash uchun <a href="${resetLink}">shu yerga bosing</a>.</p>
+      <p>Agar bu siz bo'lmasangiz, bu xabarni e'tiborsiz qoldiring.</p>`,
+    });
+
+    return { message: 'Reset link sent to email' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(token);
+    } catch (e) {
+      throw new BadRequestException('Token is invalid or expired');
+    }
+    const user = await this.userModel.findById(payload.id);
+    if (!user) throw new NotFoundException('User not found');
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    return { message: 'Password successfully changed' };
   }
 
   async #_checkExistUserByEmailAndPhone(email: string, phoneNumber: string) {

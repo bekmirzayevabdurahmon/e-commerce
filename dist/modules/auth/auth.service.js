@@ -16,15 +16,19 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
 const user_1 = require("../user");
 const mongoose_2 = require("mongoose");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 let AuthService = class AuthService {
     userModel;
     jwtService;
-    constructor(userModel, jwtService) {
+    configService;
+    constructor(userModel, jwtService, configService) {
         this.userModel = userModel;
         this.jwtService = jwtService;
+        this.configService = configService;
     }
     async register(payload) {
         await this.#_checkExistUserByEmailAndPhone(payload.email, payload.phoneNumber);
@@ -93,6 +97,46 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('Refresh token expired or invalid');
         }
     }
+    async forgetPassword(email) {
+        const user = await this.userModel.findOne({ email });
+        if (!user)
+            throw new common_1.NotFoundException('User not found');
+        const token = this.jwtService.sign({ id: user.id, email: user.email }, { expiresIn: '30m' });
+        const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
+        const resetLink = `${frontendUrl}/pages/auth/reset-password.html?token=${token}`;
+        const transporter = nodemailer.createTransport({
+            host: this.configService.get('EMAIL_HOST'),
+            port: Number(this.configService.get('EMAIL_PORT')),
+            secure: Number(this.configService.get('EMAIL_PORT')) === 465,
+            auth: {
+                user: this.configService.get('EMAIL_USER'),
+                pass: this.configService.get('EMAIL_PASS'),
+            },
+        });
+        await transporter.sendMail({
+            from: `"E-commerce" <${this.configService.get('EMAIL_USER')}>`,
+            to: user.email,
+            subject: 'Parolni tiklash',
+            html: `<p>Parolni tiklash uchun <a href="${resetLink}">shu yerga bosing</a>.</p>
+      <p>Agar bu siz bo'lmasangiz, bu xabarni e'tiborsiz qoldiring.</p>`,
+        });
+        return { message: 'Reset link sent to email' };
+    }
+    async resetPassword(token, newPassword) {
+        let payload;
+        try {
+            payload = this.jwtService.verify(token);
+        }
+        catch (e) {
+            throw new common_1.BadRequestException('Token is invalid or expired');
+        }
+        const user = await this.userModel.findById(payload.id);
+        if (!user)
+            throw new common_1.NotFoundException('User not found');
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+        return { message: 'Password successfully changed' };
+    }
     async #_checkExistUserByEmailAndPhone(email, phoneNumber) {
         const user = await this.userModel.findOne({
             $or: [{ email: email }, { phoneNumber: phoneNumber }],
@@ -108,6 +152,7 @@ exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_1.User.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
-        jwt_1.JwtService])
+        jwt_1.JwtService,
+        config_1.ConfigService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

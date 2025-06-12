@@ -1,4 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { User, UserDocument } from '../user';
 import { Model } from 'mongoose';
 import { LoginDto, RegisterDto } from './dtos';
@@ -6,7 +7,8 @@ export declare class AuthService {
     #private;
     private userModel;
     private jwtService;
-    constructor(userModel: Model<UserDocument>, jwtService: JwtService);
+    private configService;
+    constructor(userModel: Model<UserDocument>, jwtService: JwtService, configService: ConfigService);
     register(payload: RegisterDto): Promise<{
         message: string;
         data: {
@@ -46,5 +48,11 @@ export declare class AuthService {
     refreshAccessToken(refreshToken: string): Promise<{
         message: string;
         accessToken: string;
+    }>;
+    forgetPassword(email: string): Promise<{
+        message: string;
+    }>;
+    resetPassword(token: string, newPassword: string): Promise<{
+        message: string;
     }>;
 }

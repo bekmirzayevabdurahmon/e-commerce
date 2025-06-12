@@ -31,6 +31,12 @@ let AuthController = class AuthController {
     async refresh(refreshToken) {
         return this.service.refreshAccessToken(refreshToken);
     }
+    async forgetPassword(dto) {
+        return this.service.forgetPassword(dto.email);
+    }
+    async resetPassword(dto) {
+        return this.service.resetPassword(dto.token, dto.newPassword);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -54,6 +60,20 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "refresh", null);
+__decorate([
+    (0, common_1.Post)('forget-password'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dtos_1.ForgetPasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "forgetPassword", null);
+__decorate([
+    (0, common_1.Post)('reset-password'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [dtos_1.ResetPasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -1,6 +1,6 @@
 import { AuthService } from "./auth.service";
 import { RegisterDto } from "./dtos/register.dto";
-import { LoginDto } from "./dtos";
+import { ForgetPasswordDto, LoginDto, ResetPasswordDto } from "./dtos";
 export declare class AuthController {
     private service;
     constructor(service: AuthService);
@@ -43,5 +43,11 @@ export declare class AuthController {
     refresh(refreshToken: string): Promise<{
         message: string;
         accessToken: string;
+    }>;
+    forgetPassword(dto: ForgetPasswordDto): Promise<{
+        message: string;
+    }>;
+    resetPassword(dto: ResetPasswordDto): Promise<{
+        message: string;
     }>;
 }
