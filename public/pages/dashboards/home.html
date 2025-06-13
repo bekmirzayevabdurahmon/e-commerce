@@ -2,65 +2,118 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <title>Foydalanuvchi Dashboard | Shopcart</title>
-  <link rel="stylesheet" href="../css/user-dashboard.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech Market | Home</title>
+  <link rel="stylesheet" href="../../css/dashboard/home.css">
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/7/75/Uzum_Market_logo.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="user-header">
-    <div class="brand">Shopcart</div>
-    <div class="role">Foydalanuvchi</div>
-    <button class="logout-btn" onclick="logout()">Chiqish</button>
-  </header>
-  <main class="user-main">
-    <h1>Mening mahsulotlarim</h1>
-    <section>
-      <h2>Mahsulot qo'shish</h2>
-      <form id="addProductForm" enctype="multipart/form-data">
-        <div class="form-row">
-          <input type="text" name="name" placeholder="Nomi" required>
-          <input type="text" name="description" placeholder="Tavsifi" required>
-          <input type="number" step="0.01" name="price" placeholder="Narxi ($)" required>
-          <input type="text" name="brand" placeholder="Brend" required>
-        </div>
-        <div class="form-row">
-          <select name="categoryId" id="categoryId" required>
-            <option value="">Kategoriyani tanlang</option>
-          </select>
-          <input type="text" name="color" placeholder="Rangi" required>
-          <input type="text" name="ram" placeholder="RAM (masalan, 8GB)" required>
-          <input type="text" name="storage" placeholder="Xotira (masalan, 128GB)" required>
-        </div>
-        <div class="form-row">
-          <input type="text" name="processor" placeholder="Protsessor" required>
-          <input type="text" name="battery" placeholder="Batareya (masalan, 4000mAh)" required>
-          <input type="text" name="camera" placeholder="Kamera (masalan, 48MP)" required>
-          <input type="text" name="selfieCamera" placeholder="Selfie kamera (masalan, 12MP)" required>
-        </div>
-        <div class="form-row">
-          <input type="number" name="stock" placeholder="Zaxira (dona)" min="1" required>
-          <!-- sellerId avtomatik userdan olinadi -->
-          <input type="file" name="images" id="images" multiple accept="image/*" required>
-        </div>
-        <button type="submit" id="add-product-btn">Qo'shish</button>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="home.html" class="navbar-brand">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Uzum_Market_logo.svg" alt="Tech Market" style="height:34px;width:34px;vertical-align:middle;margin-right:7px;">
+        Tech Market
+      </a>
+      <div class="nav-links">
+        <a href="home.html" class="active">Bosh sahifa</a>
+        <a href="#">Kategoriyalar</a>
+        <a href="#">Chegirmalar</a>
+        <a href="#">Buyurtmalarim</a>
+      </div>
+      <form class="search-form" id="searchForm" role="search" autocomplete="off">
+        <input type="search" id="searchInput" placeholder="Mahsulot qidiring..." aria-label="Qidiruv">
+        <button type="submit">Qidirish</button>
       </form>
-    </section>
-    <section>
-      <h2>Mening mahsulotlarim</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Rasm</th>
-            <th>Nomi</th>
-            <th>Narxi</th>
-            <th>Kategoriya</th>
-            <th>Soni</th>
-            <th>Amallar</th>
-          </tr>
-        </thead>
-        <tbody id="user-products-table"></tbody>
-      </table>
-    </section>
-  </main>
-  <script src="../js/user-dashboard.js"></script>
+      <div class="auth-links">
+        <span id="username"></span>
+        <a href="../cart.html" class="cart-link"><span>🛒</span><span id="cartCount" class="cart-count">0</span></a>
+        <button id="logoutBtn" class="theme-toggle" title="Chiqish">&#x2716;</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BANNER -->
+  <div class="banner-container">
+    <div class="banner-slider" id="bannerSlider">
+      <div class="banner-slide active">
+        <img src="/images/banner1.jpg" alt="Tech Deal">
+        <div class="banner-caption">
+          <h2>Yangi texnologiyalar uchun 50% gacha CHEGIRMA!</h2>
+          <a href="#" class="shop-now">Sotib olish</a>
+        </div>
+      </div>
+      <div class="banner-slide">
+        <img src="/images/banner2.jpg" alt="Special Offer">
+        <div class="banner-caption">
+          <h2>Eng so‘nggi gadjetlar va smartfonlar Tech Market’da!</h2>
+          <a href="#" class="shop-now">Ko‘rish</a>
+        </div>
+      </div>
+    </div>
+    <button class="slider-prev" id="prevSlide">❮</button>
+    <button class="slider-next" id="nextSlide">❯</button>
+  </div>
+
+  <!-- Category Tags -->
+  <div class="container filter-tags-container">
+    <div class="filter-tags" id="categoryTags"></div>
+  </div>
+
+  <!-- Main Content: Sidebar + Products -->
+  <div class="container">
+    <div class="products-grid">
+      <!-- Sidebar Filters -->
+      <aside class="filters">
+        <h3>Filterlar</h3>
+        <label for="priceRange">Narx</label>
+        <input type="range" id="priceRange" min="0" max="1000" step="10">
+        <label for="brandSelect">Brend</label>
+        <select id="brandSelect">
+            <option value="">Barcha brendlar</option>
+        </select>
+        <label>
+          <input type="checkbox" id="inStockOnly">
+          Faqat omborda
+        </label>
+      </aside>
+      <!-- Products -->
+      <main>
+        <h2 class="section-title">Ommabop mahsulotlar</h2>
+        <div class="products-list" id="product-list">
+          <!-- Mahsulotlar JS orqali yuklanadi -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Tech Market. Barcha huquqlar himoyalangan.</p>
+  </footer>
+  <script src="../../js/dashboard/home.js"></script>
+  <script>
+  // Simple Banner Slider (copy from shopcart logic)
+  document.addEventListener('DOMContentLoaded', () => {
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.banner-slide');
+    const prevSlide = document.getElementById('prevSlide');
+    const nextSlide = document.getElementById('nextSlide');
+    function showSlide(index) {
+      if (index >= slides.length) slideIndex = 0;
+      if (index < 0) slideIndex = slides.length - 1;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === slideIndex);
+      });
+    }
+    function nextSlideHandler() { slideIndex++; showSlide(slideIndex); }
+    function prevSlideHandler() { slideIndex--; showSlide(slideIndex); }
+    prevSlide.addEventListener('click', prevSlideHandler);
+    nextSlide.addEventListener('click', nextSlideHandler);
+    setInterval(nextSlideHandler, 6000);
+    showSlide(slideIndex);
+  });
+  </script>
 </body>
 </html>

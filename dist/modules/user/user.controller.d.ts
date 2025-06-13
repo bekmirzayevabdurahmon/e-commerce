@@ -1,5 +1,6 @@
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto, FindUserDto } from './dtos';
+import { Request } from 'express';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
@@ -37,19 +38,8 @@ export declare class UserController {
             _id: import("mongoose").Types.ObjectId;
         }>)[];
     }>;
-    getMe(req: any): Promise<{
-        message: string;
-        data: import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, import("./schema").User, {}> & import("./schema").User & {
-            _id: import("mongoose").Types.ObjectId;
-        } & {
-            __v: number;
-        }, {}> & import("mongoose").Document<unknown, {}, import("./schema").User, {}> & import("./schema").User & {
-            _id: import("mongoose").Types.ObjectId;
-        } & {
-            __v: number;
-        } & Required<{
-            _id: import("mongoose").Types.ObjectId;
-        }>;
+    getMe(req: Request): Promise<{
+        data: any;
     }>;
     findOne(id: string): Promise<{
         message: string;

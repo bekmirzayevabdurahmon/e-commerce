@@ -1,23 +1,27 @@
-document.getElementById('forgotPasswordForm').onsubmit = async function (e) {
+document.getElementById('forgotPasswordForm').addEventListener('submit', async function (e) {
   e.preventDefault();
-  const email = document.getElementById('forgot-email').value;
-  document.getElementById('forgot-status').textContent = 'Yuborilmoqda...';
+  const email = e.target.email.value;
+  const messageDiv = document.getElementById('message');
+  messageDiv.textContent = '';
+  messageDiv.style.color = '#333';
 
   try {
-    const res = await fetch('http://localhost:3000/auth/forget-password', {
+    const response = await fetch('/auth/forget-password', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ email })
     });
-    const data = await res.json();
-    if (res.ok) {
-      document.getElementById('forgot-status').textContent = 
-        'Emailga reset token yuborildi! (Testda token: ' + (data.token || '') + ')';
-      // Real loyihada: reset sahifasiga yo'naltirish yoki foydalanuvchiga xabar
+    const result = await response.json();
+    if (response.ok) {
+      messageDiv.textContent = 'Emailga parolni tiklash uchun link yuborildi!';
+      messageDiv.style.color = '#10b981';
+      e.target.reset();
     } else {
-      document.getElementById('forgot-status').textContent = data.message || 'Xatolik';
+      messageDiv.textContent = result.message || 'Xatolik yuz berdi';
+      messageDiv.style.color = '#ef4444';
     }
   } catch (err) {
-    document.getElementById('forgot-status').textContent = 'Server xatoligi!';
+    messageDiv.textContent = 'Serverda xatolik. Qayta urinib ko‘ring!';
+    messageDiv.style.color = '#ef4444';
   }
-};
+});

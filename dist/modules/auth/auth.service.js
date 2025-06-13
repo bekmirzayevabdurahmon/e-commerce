@@ -86,7 +86,7 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('Refresh token not found');
         }
         try {
-            const payload = this.jwtService.verify(refreshToken);
+            this.jwtService.verify(refreshToken);
             const newAccessToken = this.jwtService.sign({ id: user.id, role: user.role }, { expiresIn: '15m' });
             return {
                 message: 'Access token refreshed ✅',
@@ -99,8 +99,9 @@ let AuthService = class AuthService {
     }
     async forgetPassword(email) {
         const user = await this.userModel.findOne({ email });
-        if (!user)
+        if (!user) {
             throw new common_1.NotFoundException('User not found');
+        }
         const token = this.jwtService.sign({ id: user.id, email: user.email }, { expiresIn: '30m' });
         const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
         const resetLink = `${frontendUrl}/pages/auth/reset-password.html?token=${token}`;
@@ -113,13 +114,18 @@ let AuthService = class AuthService {
                 pass: this.configService.get('EMAIL_PASS'),
             },
         });
-        await transporter.sendMail({
-            from: `"E-commerce" <${this.configService.get('EMAIL_USER')}>`,
-            to: user.email,
-            subject: 'Parolni tiklash',
-            html: `<p>Parolni tiklash uchun <a href="${resetLink}">shu yerga bosing</a>.</p>
-      <p>Agar bu siz bo'lmasangiz, bu xabarni e'tiborsiz qoldiring.</p>`,
-        });
+        try {
+            await transporter.sendMail({
+                from: `"E-commerce" <${this.configService.get('EMAIL_USER')}>`,
+                to: user.email,
+                subject: 'Parolni tiklash',
+                html: `<p>Parolni tiklash uchun <a href="${resetLink}">shu yerga bosing</a>.</p>
+        <p>Agar bu siz bo'lmasangiz, bu xabarni e'tiborsiz qoldiring.</p>`,
+            });
+        }
+        catch (err) {
+            throw new common_1.BadRequestException('Email yuborilmadi: ' + err.message);
+        }
         return { message: 'Reset link sent to email' };
     }
     async resetPassword(token, newPassword) {
@@ -131,8 +137,9 @@ let AuthService = class AuthService {
             throw new common_1.BadRequestException('Token is invalid or expired');
         }
         const user = await this.userModel.findById(payload.id);
-        if (!user)
+        if (!user) {
             throw new common_1.NotFoundException('User not found');
+        }
         user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
         return { message: 'Password successfully changed' };

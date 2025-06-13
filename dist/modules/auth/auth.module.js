@@ -11,7 +11,7 @@ const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
-const user_1 = require("../user");
+const user_module_1 = require("../user/user.module");
 const config_1 = require("@nestjs/config");
 let AuthModule = class AuthModule {
 };
@@ -26,10 +26,11 @@ exports.AuthModule = AuthModule = __decorate([
                 secret: process.env.ACCESS_TOKEN_SECRET || "secret_key",
                 signOptions: { expiresIn: process.env.ACCESS_TOKEN_SECRET_TIME || '900' }
             }),
-            user_1.UserModule,
+            (0, common_1.forwardRef)(() => user_module_1.UserModule),
         ],
         providers: [auth_service_1.AuthService],
         controllers: [auth_controller_1.AuthController],
+        exports: [jwt_1.JwtModule, auth_service_1.AuthService],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map
