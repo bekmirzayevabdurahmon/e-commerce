@@ -28,11 +28,45 @@ let ProductService = class ProductService {
         this.productModel = productModel;
         this.categoryModel = categoryModel;
     }
-    async getAll() {
-        const products = await this.productModel.find().exec();
+    async getAll(filters = {}) {
+        const { categoryId, brand, minPrice, maxPrice, inStock, q, page = 1, limit = 12, } = filters;
+        const query = {};
+        if (categoryId)
+            query.categoryId = categoryId;
+        if (brand)
+            query.brand = brand;
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice !== undefined)
+                query.price.$gte = Number(minPrice);
+            if (maxPrice !== undefined)
+                query.price.$lte = Number(maxPrice);
+        }
+        if (inStock === 'true' || inStock === true) {
+            query.stock = { $gt: 0 };
+        }
+        if (q) {
+            query.$or = [
+                { name: { $regex: q, $options: "i" } },
+                { description: { $regex: q, $options: "i" } }
+            ];
+        }
+        const pageNum = Math.max(1, parseInt(page, 10));
+        const limitNum = Math.max(1, parseInt(limit, 10));
+        const skip = (pageNum - 1) * limitNum;
+        const [products, total] = await Promise.all([
+            this.productModel.find(query).skip(skip).limit(limitNum).exec(),
+            this.productModel.countDocuments(query).exec()
+        ]);
         return {
             message: "success ✅",
             data: products,
+            pagination: {
+                page: pageNum,
+                limit: limitNum,
+                total,
+                totalPages: Math.ceil(total / limitNum)
+            }
         };
     }
     async getById(id) {

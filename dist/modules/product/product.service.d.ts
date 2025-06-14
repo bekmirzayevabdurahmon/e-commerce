@@ -7,7 +7,7 @@ export declare class ProductService {
     private productModel;
     private categoryModel;
     constructor(productModel: Model<ProductDocument>, categoryModel: Model<CategoryDocument>);
-    getAll(): Promise<{
+    getAll(filters?: any): Promise<{
         message: string;
         data: (import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, Product, {}> & Product & {
             _id: Types.ObjectId;
@@ -20,6 +20,12 @@ export declare class ProductService {
         } & Required<{
             _id: Types.ObjectId;
         }>)[];
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
     }>;
     getById(id: string): Promise<{
         message: string;

@@ -25,8 +25,8 @@ let ProductController = class ProductController {
     constructor(service) {
         this.service = service;
     }
-    async getAll() {
-        return await this.service.getAll();
+    async getAll(query) {
+        return await this.service.getAll(query);
     }
     async getById(id) {
         return await this.service.getById(id);
@@ -45,16 +45,17 @@ let ProductController = class ProductController {
 exports.ProductController = ProductController;
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Barcha mahsulotlarni olish' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Barcha mahsulotlarni olish (filter, qidiruv, pagination)' }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Mahsulotlar ro‘yxati muvaffaqiyatli qaytarildi.', type: [dtos_1.CreateProductDto] }),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    (0, decorators_1.Protected)(true),
-    (0, decorators_1.Roles)([enums_1.UserRole.USER, enums_1.UserRole.ADMIN]),
+    (0, decorators_1.Protected)(false),
+    (0, decorators_1.Roles)([enums_1.UserRole.USER, enums_1.UserRole.ADMIN, enums_1.UserRole.USER]),
     (0, swagger_1.ApiOperation)({ summary: 'Mahsulotni ID bo‘yicha olish' }),
     (0, swagger_1.ApiParam)({ name: 'id', description: 'Mahsulot ID si', example: '507f1f77bcf86cd799439011' }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Mahsulot topildi.', type: dtos_1.CreateProductDto }),
@@ -68,7 +69,7 @@ __decorate([
 __decorate([
     (0, common_1.Post)(),
     (0, decorators_1.Protected)(true),
-    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN]),
+    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN, enums_1.UserRole.SELLER]),
     (0, swagger_1.ApiOperation)({ summary: 'Yangi mahsulot yaratish' }),
     (0, swagger_1.ApiConsumes)('multipart/form-data'),
     (0, swagger_1.ApiBody)({
@@ -104,9 +105,9 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "create", null);
 __decorate([
-    (0, common_1.Put)(':id'),
+    (0, common_1.Patch)(':id'),
     (0, decorators_1.Protected)(true),
-    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN]),
+    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN, enums_1.UserRole.SELLER]),
     (0, swagger_1.ApiOperation)({ summary: 'Mahsulotni yangilash' }),
     (0, swagger_1.ApiConsumes)('multipart/form-data'),
     (0, swagger_1.ApiParam)({ name: 'id', description: 'Mahsulot ID si', example: '507f1f77bcf86cd799439011' }),
@@ -134,7 +135,7 @@ __decorate([
     }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Mahsulot muvaffaqiyatli yangilandi.', type: dtos_1.UpdateProductDto }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Mahsulot topilmadi.' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.FORBIDDEN, description: 'Ruxsat yo‘q (faqat admin uchun).' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.FORBIDDEN, description: 'Ruxsat yo‘q (faqat admin va seller uchun).' }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('images')),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -146,7 +147,7 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, decorators_1.Protected)(true),
-    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN]),
+    (0, decorators_1.Roles)([enums_1.UserRole.ADMIN, enums_1.UserRole.SELLER]),
     (0, swagger_1.ApiOperation)({ summary: 'Mahsulotni o‘chirish' }),
     (0, swagger_1.ApiParam)({ name: 'id', description: 'Mahsulot ID si', example: '507f1f77bcf86cd799439011' }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NO_CONTENT, description: 'Mahsulot muvaffaqiyatli o‘chirildi.' }),

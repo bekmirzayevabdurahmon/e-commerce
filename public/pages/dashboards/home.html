@@ -1,119 +1,162 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tech Market | Home</title>
-  <link rel="stylesheet" href="../../css/dashboard/home.css">
-  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/7/75/Uzum_Market_logo.svg">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Shopcart | Bosh sahifa</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">Shopcart</a>
+            <div class="nav-links">
+                <a href="/pages/dashboards/home.html" class="active">Bosh sahifa</a>
+                <a href="/deals.html">Chegirmalar</a>
+                <a href="/categories.html">Kategoriyalar</a>
+                <a href="/delivery.html">Yetkazib berish</a>
+            </div>
+            <form id="searchForm" class="search-form" role="search" autocomplete="off">
+                <input type="search" id="searchInput" placeholder="Mahsulot qidirish..." aria-label="Search">
+                <button type="submit">Qidirish</button>
+            </form>
+            <div class="auth-links">
+                <span id="username" style="font-weight:600;color:#2a6ee6;"></span>
+                <a href="/pages/additional/cart.html" class="cart-link">Savat (<span id="cartCount">0</span>)</a>
+                <button id="logoutButton" class="logout-btn" title="Chiqish">Logout</button>
+                <button id="themeToggle" class="theme-toggle" title="Tungi rejim">🌓</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner Slider -->
+    <div class="banner-container">
+        <div class="banner-slider" id="bannerSlider">
+            <div class="banner-slide active">
+                <img src="/images/banner1.jpg" alt="Headphone Deal">
+                <div class="banner-caption">
+                    <h2>50% chegirma: Tanlangan naushniklar uchun ajoyib aksiya!</h2>
+                    <a href="/deals.html" class="shop-now">Hozir xarid qilish</a>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="/images/banner2.jpg" alt="Special Offer">
+                <div class="banner-caption">
+                    <h2>Eng yangi audio texnologiyalarini bizdan toping!</h2>
+                    <a href="/categories.html" class="shop-now">Ko‘rish</a>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="/images/banner3.jpg" alt="Fast Delivery">
+                <div class="banner-caption">
+                    <h2>Express yetkazib berish xizmati bilan haridlaringiz tez yetadi!</h2>
+                    <a href="/delivery.html" class="shop-now">Batafsil</a>
+                </div>
+            </div>
+        </div>
+        <button class="slider-prev" id="prevSlide">❮</button>
+        <button class="slider-next" id="nextSlide">❯</button>
+    </div>
+
+    <!-- Category Filter Tags -->
+    <div class="container filter-tags-container">
+        <div class="filter-tags" id="categoryTags">
+            <!-- Kategoriyalar JS bilan yuklanadi -->
+        </div>
+    </div>
+
+    <!-- Main Content: Sidebar + Products -->
     <div class="container">
-      <a href="home.html" class="navbar-brand">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Uzum_Market_logo.svg" alt="Tech Market" style="height:34px;width:34px;vertical-align:middle;margin-right:7px;">
-        Tech Market
-      </a>
-      <div class="nav-links">
-        <a href="home.html" class="active">Bosh sahifa</a>
-        <a href="#">Kategoriyalar</a>
-        <a href="#">Chegirmalar</a>
-        <a href="#">Buyurtmalarim</a>
-      </div>
-      <form class="search-form" id="searchForm" role="search" autocomplete="off">
-        <input type="search" id="searchInput" placeholder="Mahsulot qidiring..." aria-label="Qidiruv">
-        <button type="submit">Qidirish</button>
-      </form>
-      <div class="auth-links">
-        <span id="username"></span>
-        <a href="../cart.html" class="cart-link"><span>🛒</span><span id="cartCount" class="cart-count">0</span></a>
-        <button id="logoutBtn" class="theme-toggle" title="Chiqish">&#x2716;</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- BANNER -->
-  <div class="banner-container">
-    <div class="banner-slider" id="bannerSlider">
-      <div class="banner-slide active">
-        <img src="/images/banner1.jpg" alt="Tech Deal">
-        <div class="banner-caption">
-          <h2>Yangi texnologiyalar uchun 50% gacha CHEGIRMA!</h2>
-          <a href="#" class="shop-now">Sotib olish</a>
+        <div class="products-grid">
+            <!-- Sidebar Filters -->
+            <aside class="filters">
+                <h3>Filterlar</h3>
+                <label for="priceRange">Narx</label>
+                <input type="range" id="priceRange" min="0" max="5000" step="10">
+                <span id="priceValue">0</span> $
+                <label for="brandSelect">Brend</label>
+                <select id="brandSelect"><option value="">Barcha brendlar</option></select>
+                <label>
+                    <input type="checkbox" id="inStockOnly">
+                    Faqat omborda
+                </label>
+            </aside>
+            <!-- Products -->
+            <main>
+                <h2 class="section-title">Ommabop mahsulotlar</h2>
+                <div class="products-list" id="productsGrid">
+                    <!-- Mahsulotlar JS orqali yuklanadi -->
+                </div>
+            </main>
         </div>
-      </div>
-      <div class="banner-slide">
-        <img src="/images/banner2.jpg" alt="Special Offer">
-        <div class="banner-caption">
-          <h2>Eng so‘nggi gadjetlar va smartfonlar Tech Market’da!</h2>
-          <a href="#" class="shop-now">Ko‘rish</a>
-        </div>
-      </div>
     </div>
-    <button class="slider-prev" id="prevSlide">❮</button>
-    <button class="slider-next" id="nextSlide">❯</button>
-  </div>
 
-  <!-- Category Tags -->
-  <div class="container filter-tags-container">
-    <div class="filter-tags" id="categoryTags"></div>
-  </div>
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Shopcart. Barcha huquqlar himoyalangan.</p>
+    </footer>
 
-  <!-- Main Content: Sidebar + Products -->
-  <div class="container">
-    <div class="products-grid">
-      <!-- Sidebar Filters -->
-      <aside class="filters">
-        <h3>Filterlar</h3>
-        <label for="priceRange">Narx</label>
-        <input type="range" id="priceRange" min="0" max="1000" step="10">
-        <label for="brandSelect">Brend</label>
-        <select id="brandSelect">
-            <option value="">Barcha brendlar</option>
-        </select>
-        <label>
-          <input type="checkbox" id="inStockOnly">
-          Faqat omborda
-        </label>
-      </aside>
-      <!-- Products -->
-      <main>
-        <h2 class="section-title">Ommabop mahsulotlar</h2>
-        <div class="products-list" id="product-list">
-          <!-- Mahsulotlar JS orqali yuklanadi -->
-        </div>
-      </main>
-    </div>
-  </div>
+    <script>
+    // Banner slider
+    document.addEventListener('DOMContentLoaded', () => {
+        let slideIndex = 0;
+        const slides = document.querySelectorAll('.banner-slide');
+        const prevSlide = document.getElementById('prevSlide');
+        const nextSlide = document.getElementById('nextSlide');
+        function showSlide(index) {
+            if (index >= slides.length) slideIndex = 0;
+            if (index < 0) slideIndex = slides.length - 1;
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === slideIndex);
+            });
+        }
+        function nextSlideHandler() { slideIndex++; showSlide(slideIndex); }
+        function prevSlideHandler() { slideIndex--; showSlide(slideIndex); }
+        prevSlide.addEventListener('click', prevSlideHandler);
+        nextSlide.addEventListener('click', nextSlideHandler);
+        setInterval(nextSlideHandler, 5000);
+        showSlide(slideIndex);
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 Tech Market. Barcha huquqlar himoyalangan.</p>
-  </footer>
-  <script src="../../js/dashboard/home.js"></script>
-  <script>
-  // Simple Banner Slider (copy from shopcart logic)
-  document.addEventListener('DOMContentLoaded', () => {
-    let slideIndex = 0;
-    const slides = document.querySelectorAll('.banner-slide');
-    const prevSlide = document.getElementById('prevSlide');
-    const nextSlide = document.getElementById('nextSlide');
-    function showSlide(index) {
-      if (index >= slides.length) slideIndex = 0;
-      if (index < 0) slideIndex = slides.length - 1;
-      slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === slideIndex);
-      });
-    }
-    function nextSlideHandler() { slideIndex++; showSlide(slideIndex); }
-    function prevSlideHandler() { slideIndex--; showSlide(slideIndex); }
-    prevSlide.addEventListener('click', prevSlideHandler);
-    nextSlide.addEventListener('click', nextSlideHandler);
-    setInterval(nextSlideHandler, 6000);
-    showSlide(slideIndex);
-  });
-  </script>
+        // Dark/Light Theme
+        const themeToggle = document.getElementById('themeToggle');
+        function setTheme(dark) {
+            document.body.classList.toggle('dark-mode', dark);
+            localStorage.setItem('darkMode', dark ? 'true' : 'false');
+        }
+        themeToggle.addEventListener('click', () => {
+            setTheme(!document.body.classList.contains('dark-mode'));
+        });
+        if (localStorage.getItem('darkMode') === 'true') {
+            setTheme(true);
+        }
+
+        // Username va logout
+        const usernameEl = document.getElementById('username');
+        const logoutBtn = document.getElementById('logoutButton');
+        // Foydalanuvchi ma’lumotini yuklash
+        async function getUserInfo() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+                const res = await fetch('/users/me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (!res.ok) return;
+                const user = await res.json();
+                usernameEl.textContent = user.data?.name || user.data?.email || '';
+            } catch {}
+        }
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('token');
+                location.href = '/pages/auth/login.html';
+            });
+        }
+        getUserInfo();
+    });
+    </script>
+    <script src="../../js/dashboard/home.js"></script>
 </body>
 </html>

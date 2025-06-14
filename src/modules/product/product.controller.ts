@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseInterceptors, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFiles, UseInterceptors, HttpCode, HttpStatus, Query, Patch } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
 import { CreateProductDto, UpdateProductDto } from './dtos';
@@ -12,16 +12,16 @@ import { UserRole } from 'src/enums';
 export class ProductController {
   constructor(private service: ProductService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Barcha mahsulotlarni olish' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Mahsulotlar ro‘yxati muvaffaqiyatli qaytarildi.', type: [CreateProductDto] })
-  async getAll() {
-    return await this.service.getAll();
-  }
+@Get()
+@ApiOperation({ summary: 'Barcha mahsulotlarni olish (filter, qidiruv, pagination)' })
+@ApiResponse({ status: HttpStatus.OK, description: 'Mahsulotlar ro‘yxati muvaffaqiyatli qaytarildi.', type: [CreateProductDto] })
+async getAll(@Query() query: any) {
+  return await this.service.getAll(query);
+}
 
   @Get(':id')
-  @Protected(true)
-  @Roles([UserRole.USER, UserRole.ADMIN])
+  @Protected(false)
+  @Roles([UserRole.USER, UserRole.ADMIN, UserRole.USER])
   @ApiOperation({ summary: 'Mahsulotni ID bo‘yicha olish' })
   @ApiParam({ name: 'id', description: 'Mahsulot ID si', example: '507f1f77bcf86cd799439011' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Mahsulot topildi.', type: CreateProductDto })
@@ -33,7 +33,7 @@ export class ProductController {
 
   @Post()
   @Protected(true)
-  @Roles([UserRole.ADMIN])
+  @Roles([UserRole.ADMIN, UserRole.SELLER])
   @ApiOperation({ summary: 'Yangi mahsulot yaratish' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -66,9 +66,9 @@ export class ProductController {
     return await this.service.create(payload, files);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @Protected(true)
-  @Roles([UserRole.ADMIN])
+  @Roles([UserRole.ADMIN, UserRole.SELLER])
   @ApiOperation({ summary: 'Mahsulotni yangilash' })
   @ApiConsumes('multipart/form-data')
   @ApiParam({ name: 'id', description: 'Mahsulot ID si', example: '507f1f77bcf86cd799439011' })
@@ -96,7 +96,7 @@ export class ProductController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Mahsulot muvaffaqiyatli yangilandi.', type: UpdateProductDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Mahsulot topilmadi.' })
-  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Ruxsat yo‘q (faqat admin uchun).' })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Ruxsat yo‘q (faqat admin va seller uchun).' })
   @UseInterceptors(FilesInterceptor('images'))
   async update(@Param('id') id: string, @Body() payload: UpdateProductDto, @UploadedFiles() files: Express.Multer.File[]) {
     return await this.service.update(id, payload, files);
@@ -104,7 +104,7 @@ export class ProductController {
 
   @Delete(':id')
   @Protected(true)
-  @Roles([UserRole.ADMIN])
+  @Roles([UserRole.ADMIN, UserRole.SELLER])
   @ApiOperation({ summary: 'Mahsulotni o‘chirish' })
   @ApiParam({ name: 'id', description: 'Mahsulot ID si', example: '507f1f77bcf86cd799439011' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Mahsulot muvaffaqiyatli o‘chirildi.' })

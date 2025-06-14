@@ -1,239 +1,374 @@
-let userId = null;
-let allProducts = [];
-let allCategories = [];
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
+document.addEventListener('DOMContentLoaded', () => {
+    // Banner Slider
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.banner-slide');
+    const prevSlide = document.getElementById('prevSlide');
+    const nextSlide = document.getElementById('nextSlide');
 
-// Foydalanuvchini aniqlash
-async function getUserId() {
-    try {
-        const res = await fetch('/auth/me');
-        const user = await res.json();
-        userId = user.data?._id || user._id;
-        document.getElementById('username').textContent = user.data?.name || user.data?.email || '';
-        return userId;
-    } catch {
-        return null;
+    function showSlide(index) {
+        if (index >= slides.length) slideIndex = 0;
+        if (index < 0) slideIndex = slides.length - 1;
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === slideIndex) slide.classList.add('active');
+        });
     }
-}
 
-// Kategoriyalar va filterlar
-async function loadCategories() {
-    try {
-        const res = await fetch('/categories');
-        const data = await res.json();
-        allCategories = data.data || [];
-        renderCategories();
-    } catch {
-        document.getElementById('categoryTags').innerHTML = '<span style="color:red;">Kategoriyalar yuklanmadi</span>';
+    function nextSlideHandler() {
+        slideIndex++;
+        showSlide(slideIndex);
     }
-}
-function renderCategories() {
+
+    function prevSlideHandler() {
+        slideIndex--;
+        showSlide(slideIndex);
+    }
+
+    if (prevSlide) prevSlide.addEventListener('click', prevSlideHandler);
+    if (nextSlide) nextSlide.addEventListener('click', nextSlideHandler);
+    if (slides.length > 0) {
+        setInterval(nextSlideHandler, 3000);
+        showSlide(slideIndex);
+    }
+
+    // Login Functionality
+    const loginButton = document.getElementById('loginButton');
+    if (loginButton) {
+        loginButton.addEventListener('click', async () => {
+            const email = prompt('Enter your email:');
+            const password = prompt('Enter your password:');
+
+            try {
+                const response = await fetch('http://localhost:3000/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Login successful!');
+                    window.location.href = '/dashboard.html';
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('An error occurred during login');
+            }
+        });
+    }
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
+    }
+
+    // Load Dark Mode from Local Storage
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+
+    // --- FILTER, CATEGORY, PAGINATION LOGIC STARTS HERE ---
+
+    // Elements
     const categoryTags = document.getElementById('categoryTags');
-    if (!categoryTags) return;
-    categoryTags.innerHTML = '';
-    const allBtn = document.createElement('button');
-    allBtn.className = 'filter-tag active';
-    allBtn.textContent = 'Barchasi';
-    allBtn.onclick = () => {
-        document.querySelectorAll('.filter-tag').forEach(btn => btn.classList.remove('active'));
-        allBtn.classList.add('active');
-        renderProducts();
-    };
-    categoryTags.appendChild(allBtn);
-    allCategories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-tag';
-        btn.textContent = cat.name;
-        btn.onclick = () => {
-            document.querySelectorAll('.filter-tag').forEach(btn => btn.classList.remove('active'));
-            btn.classList.add('active');
-            renderProducts({ categoryId: cat._id });
-        };
-        categoryTags.appendChild(btn);
-    });
-}
-
-// Mahsulotlarni yuklash va ko‘rsatish
-async function loadProducts() {
-    try {
-        const res = await fetch('/products');
-        const data = await res.json();
-        allProducts = data.data || [];
-        renderProducts();
-        renderBrands();
-    } catch {
-        document.getElementById('productsGrid').innerHTML = '<div class="product-card"><p>Xatolik: Mahsulotlar yuklanmadi</p></div>';
-    }
-}
-function renderBrands() {
     const brandSelect = document.getElementById('brandSelect');
-    if (!brandSelect) return;
-    const brands = [...new Set(allProducts.map(p => p.brand).filter(Boolean))];
-    brandSelect.innerHTML = '<option value="">Barcha brendlar</option>';
-    brands.forEach(brand => {
-        const opt = document.createElement('option');
-        opt.value = brand;
-        opt.textContent = brand;
-        brandSelect.appendChild(opt);
-    });
-}
-function getFilters() {
-    const categoryActive = document.querySelector('.filter-tag.active');
-    const brand = document.getElementById('brandSelect')?.value || '';
-    const maxPrice = Number(document.getElementById('priceRange')?.value || 1e9);
-    const inStock = document.getElementById('inStockOnly')?.checked;
-    let categoryId = null;
-    if (categoryActive && categoryActive.textContent !== "Barchasi") {
-        const cat = allCategories.find(c => c.name === categoryActive.textContent);
-        if (cat) categoryId = cat._id;
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
+    const inStockOnly = document.getElementById('inStockOnly');
+    const searchInput = document.getElementById('mainSearchInput') || document.getElementById('searchInput');
+    const searchForm = document.getElementById('mainSearchForm') || document.querySelector('.search-form');
+    const productList = document.getElementById('product-list');
+    const pagination = document.getElementById('pagination');
+
+    let selectedCategoryId = null;
+    let allCategories = [];
+    let currentPage = 1;
+    let totalPages = 1;
+
+    // --- Category tags ---
+    async function loadCategories() {
+        try {
+            const res = await fetch('/categories');
+            const data = await res.json();
+            allCategories = data.data || [];
+            renderCategories();
+        } catch {
+            categoryTags.innerHTML = '<span style="color:red;">Categories loading error</span>';
+        }
     }
-    return { categoryId, brand, maxPrice, inStock };
-}
-function renderProducts(extra = {}) {
-    const grid = document.getElementById('productsGrid');
-    if (!grid) return;
-    let filtered = [...allProducts];
-    const q = document.getElementById('searchInput')?.value?.trim().toLowerCase() || '';
-    const { categoryId, brand, maxPrice, inStock } = { ...getFilters(), ...extra };
-    if (categoryId) filtered = filtered.filter(p => p.categoryId === categoryId || p.category === categoryId);
-    if (brand) filtered = filtered.filter(p => (p.brand || '').toLowerCase() === brand.toLowerCase());
-    if (maxPrice) filtered = filtered.filter(p => Number(p.price) <= maxPrice);
-    if (inStock) filtered = filtered.filter(p => p.inStock !== false && p.inStock !== 0);
-    if (q) {
-        filtered = filtered.filter(
-            p =>
-                (p.name && p.name.toLowerCase().includes(q)) ||
-                (p.description && p.description.toLowerCase().includes(q)) ||
-                (p.brand && p.brand.toLowerCase().includes(q))
-        );
+    function renderCategories() {
+        categoryTags.innerHTML = '';
+        const allBtn = document.createElement('button');
+        allBtn.className = 'filter-tag' + (selectedCategoryId === null ? ' active' : '');
+        allBtn.textContent = 'All';
+        allBtn.onclick = () => {
+            selectedCategoryId = null;
+            renderCategories();
+            loadProducts(1);
+        };
+        categoryTags.appendChild(allBtn);
+
+        allCategories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-tag' + (selectedCategoryId === cat._id ? ' active' : '');
+            btn.textContent = cat.name;
+            btn.onclick = () => {
+                selectedCategoryId = cat._id;
+                renderCategories();
+                loadProducts(1);
+            };
+            categoryTags.appendChild(btn);
+        });
     }
-    grid.innerHTML = '';
-    if (filtered.length > 0) {
-        filtered.forEach(product => {
+
+    // --- Brand select rendering ---
+    function renderBrands(brands) {
+        brandSelect.innerHTML = '<option value="">All Brands</option>';
+        brands.forEach(brand => {
+            const opt = document.createElement('option');
+            opt.value = brand;
+            opt.textContent = brand;
+            brandSelect.appendChild(opt);
+        });
+    }
+
+    // --- Products rendering ---
+    function renderProducts(products) {
+        productList.innerHTML = '';
+        if (!products.length) {
+            productList.innerHTML = '<div class="product-card"><p>No products available</p></div>';
+            return;
+        }
+        products.forEach(product => {
             const card = document.createElement('div');
             card.className = 'product-card';
             const imageUrl = product.images && product.images.length > 0
                 ? `/uploads/products-images/${product._id}/${product.images[0]}`
                 : '/images/default.jpg';
             card.innerHTML = `
-                <img src="${imageUrl}" alt="${product.name || 'Mahsulot'}">
-                <div class="product-info">
-                  <div class="product-title">${product.name || 'Mahsulot'}</div>
-                  <div class="product-price">$${product.price?.toFixed(2) || '0.00'}</div>
-                  <div class="product-desc">${product.description?.slice(0, 60) || ''}</div>
-                  <button class="add-to-cart-btn">Savatga qo'shish</button>
-                </div>
+                <a href="/product.html?id=${product._id}">
+                    <img src="${imageUrl}" alt="${product.name || 'Product'}">
+                    <h3>${product.name || 'Unnamed Product'}</h3>
+                    <p class="price">$${product.price?.toFixed(2) || '0.00'}</p>
+                </a>
+                <button class="add-to-cart">Add to Cart</button>
             `;
-            card.querySelector('.add-to-cart-btn').onclick = () => addToCart(product);
-            grid.appendChild(card);
+            card.querySelector('.add-to-cart').onclick = (e) => {
+                e.preventDefault();
+                alert(`${product.name || 'Product'} added to cart!`);
+            };
+            productList.appendChild(card);
         });
-    } else {
-        grid.innerHTML = '<div class="product-card"><p>Mahsulot topilmadi</p></div>';
     }
-}
 
-// Savat funksiyalari
-function addToCart(product) {
-    const existing = cart.find(p => p._id === product._id);
-    if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    alert("Mahsulot savatga qo'shildi!");
-}
-function updateCartCount() {
-    document.getElementById('cartCount').textContent = cart.reduce((a, p) => a + (p.quantity || 1), 0);
-}
-function loadCart() {
-    const cartTable = document.getElementById('cartTable');
-    if (!cartTable) return;
-    let total = 0;
-    cartTable.innerHTML = cart.map(item => {
-        const sum = (item.price || 0) * (item.quantity || 1);
-        total += sum;
-        return `<tr>
-          <td><img src="${item.images?.[0] ? `/uploads/products-images/${item._id}/${item.images[0]}` : '/images/default.jpg'}" style="width:40px;height:40px;object-fit:cover;border-radius:7px"></td>
-          <td>${item.name || '-'}</td>
-          <td>$${item.price?.toFixed(2) || '-'}</td>
-          <td>${item.quantity || 1}</td>
-          <td>
-            <button class="btn-user" onclick="deleteCartItem('${item._id}')">O'chirish</button>
-          </td>
-        </tr>`;
-    }).join('');
-    document.getElementById('cartTotal').textContent = total.toFixed(2);
-}
-window.deleteCartItem = function(id) {
-    cart = cart.filter(item => item._id !== id);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    loadCart();
-    updateCartCount();
-};
+    // --- Pagination rendering ---
+    function renderPagination(paginationObj) {
+        pagination.innerHTML = '';
+        if (!paginationObj || paginationObj.totalPages <= 1) return;
 
-// Buyurtma qilish
-async function makeOrder() {
-    if (!userId) {
-        alert("Buyurtma berish uchun avval tizimga kiring!");
-        return;
-    }
-    try {
-        const response = await fetch('/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user: userId, items: cart })
-        });
-        if (response.ok) {
-            alert("Buyurtma berildi!");
-            cart = [];
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartCount();
-            loadCart();
-            loadOrders();
-        } else {
-            alert("Xatolik: Buyurtma berilmadi");
+        // Prev btn
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = '‹';
+        prevBtn.disabled = paginationObj.page <= 1;
+        prevBtn.onclick = () => loadProducts(paginationObj.page - 1);
+        pagination.appendChild(prevBtn);
+
+        // Page numbers (with ellipsis)
+        for (let i = 1; i <= paginationObj.totalPages; i++) {
+            if (
+                i === 1 ||
+                i === paginationObj.totalPages ||
+                Math.abs(i - paginationObj.page) <= 1
+            ) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.disabled = i === paginationObj.page;
+                btn.onclick = () => loadProducts(i);
+                pagination.appendChild(btn);
+            } else if (
+                (i === paginationObj.page - 2 && i > 1) ||
+                (i === paginationObj.page + 2 && i < paginationObj.totalPages)
+            ) {
+                const ellipsis = document.createElement('span');
+                ellipsis.textContent = '...';
+                ellipsis.className = 'pagination-ellipsis';
+                pagination.appendChild(ellipsis);
+            }
         }
-    } catch {
-        alert("Serverda xatolik");
+
+        // Next btn
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = '›';
+        nextBtn.disabled = paginationObj.page >= paginationObj.totalPages;
+        nextBtn.onclick = () => loadProducts(paginationObj.page + 1);
+        pagination.appendChild(nextBtn);
     }
-}
 
-// Buyurtmalar ro‘yxati
-async function loadOrders() {
-    if (!userId) return;
-    try {
-        const res = await fetch(`/orders?user=${userId}`);
-        const data = await res.json();
-        const orders = data.data || [];
-        const ordersTable = document.getElementById('ordersTable');
-        if (!ordersTable) return;
-        ordersTable.innerHTML = orders.map(o => `
-          <tr>
-            <td>${o._id || '-'}</td>
-            <td>${o.products?.map(p => p.name).join(", ") || '-'}</td>
-            <td>$${o.totalPrice?.toFixed(2) || '-'}</td>
-            <td>${o.status || '-'}</td>
-          </tr>
-        `).join('');
-    } catch {}
-}
+    // --- Load and filter products (with pagination) ---
+    async function loadProducts(page = 1) {
+        const q = searchInput?.value.trim() || '';
+        const brand = brandSelect.value;
+        const maxPrice = priceRange.value;
+        const inStock = inStockOnly.checked ? 'true' : '';
+        const params = new URLSearchParams();
+        if (selectedCategoryId) params.append('categoryId', selectedCategoryId);
+        if (brand) params.append('brand', brand);
+        if (q) params.append('q', q);
+        if (maxPrice) params.append('maxPrice', maxPrice);
+        if (inStock) params.append('inStock', inStock);
+        params.append('page', page);
+        params.append('limit', 10); // 10 tadan mahsulot
 
-// Eventlar
-document.addEventListener('DOMContentLoaded', async function () {
-    await getUserId();
-    await loadCategories();
-    await loadProducts();
-    updateCartCount();
-    document.getElementById('brandSelect')?.addEventListener('change', renderProducts);
-    document.getElementById('priceRange')?.addEventListener('input', renderProducts);
-    document.getElementById('inStockOnly')?.addEventListener('change', renderProducts);
-    document.getElementById('searchForm')?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        renderProducts();
+        try {
+            const res = await fetch(`/products?${params.toString()}`);
+            const data = await res.json();
+            renderProducts(data.data || []);
+            renderPagination(data.pagination || {page: 1, totalPages: 1});
+            // Brand select options (from loaded page)
+            const brands = [...new Set((data.data || []).map(p => p.brand).filter(Boolean))];
+            renderBrands(brands);
+        } catch {
+            productList.innerHTML = '<div class="product-card"><p>Error loading products</p></div>';
+        }
+    }
+
+    // --- Filter listeners ---
+    priceRange.addEventListener('input', () => {
+        priceValue.textContent = "$0 - $" + priceRange.value;
+        loadProducts(1);
     });
-    loadCart();
-    loadOrders();
-    document.getElementById('orderBtn')?.addEventListener('click', makeOrder);
+    brandSelect.addEventListener('change', () => loadProducts(1));
+    inStockOnly.addEventListener('change', () => loadProducts(1));
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loadProducts(1);
+        });
+    }
+
+    // Initial
+    priceValue.textContent = "$0 - $1000";
+    priceRange.value = 1000;
+    loadCategories();
+    loadProducts(1);
+
+    // --- Dashboard and Cart Logic (qoladi, o'zgarmaydi) ---
+    if (window.location.pathname.includes('dashboard.html')) {
+        const logoutButton = document.getElementById('logoutButton');
+        const cartSection = document.getElementById('cartSection');
+        const cartItems = document.getElementById('cartItems');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const cartLink = document.querySelector('.cart-link');
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function updateCartCount() {
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) cartCount.textContent = cart.length;
+        }
+
+        function renderProductsDashboard() {
+            loadProducts().then(() => {
+                const productList = document.getElementById('dashboard-products');
+                if (productList) {
+                    productList.innerHTML = '';
+                    fetch('http://localhost:3000/products')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.data && data.data.length > 0) {
+                                data.data.forEach(product => {
+                                    const card = document.createElement('div');
+                                    card.className = 'product-card';
+                                    const imageUrl = product.images && product.images.length > 0 
+                                        ? `/uploads/products-images/${product._id}/${product.images[0]}`
+                                        : '/images/default.jpg';
+                                    fetch(imageUrl)
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                console.error('Image not found on server:', imageUrl);
+                                            }
+                                        })
+                                        .catch(error => console.error('Fetch error:', error));
+                                    card.innerHTML = `
+                                        <img src="${imageUrl}" alt="${product.name || 'Product'}">
+                                        <h3>${product.name || 'Unnamed Product'}</h3>
+                                        <p class="price">$${product.price?.toFixed(2) || '0.00'}</p>
+                                        <button class="add-to-cart" data-id="${product._id}">Add to Cart</button>
+                                    `;
+                                    productList.appendChild(card);
+                                });
+                                const addToCartButtons = document.querySelectorAll('.add-to-cart');
+                                addToCartButtons.forEach(button => {
+                                    button.addEventListener('click', () => {
+                                        const productId = button.getAttribute('data-id');
+                                        const product = data.data.find(p => p._id === productId);
+                                        cart.push(product);
+                                        localStorage.setItem('cart', JSON.stringify(cart));
+                                        updateCartCount();
+                                        alert(`${product.name} added to cart!`);
+                                    });
+                                });
+                            }
+                        });
+                }
+            });
+        }
+
+        function renderCart() {
+            if (cartItems) {
+                cartItems.innerHTML = '';
+                cart.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    const imageUrl = item.images && item.images.length > 0 
+                        ? `/uploads/products-images/${item._id}/${item.images[0]}`
+                        : '/images/default.jpg';
+                    fetch(imageUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Image not found on server:', imageUrl);
+                            }
+                        })
+                        .catch(error => console.error('Fetch error:', error));
+                    cartItem.innerHTML = `
+                        <img src="${imageUrl}" alt="${item.name || 'Product'}">
+                        <h3>${item.name}</h3>
+                        <p class="price">$${item.price?.toFixed(2) || '0.00'}</p>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+                if (cartSection) cartSection.style.display = 'block';
+            }
+        }
+
+        if (cartLink) {
+            cartLink.addEventListener('click', () => {
+                renderCart();
+            });
+        }
+
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+                localStorage.removeItem('cart');
+                window.location.href = '/index.html';
+            });
+        }
+
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', () => {
+                alert('Checkout functionality to be implemented (e.g., payment gateway integration)');
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                if (cartSection) cartSection.style.display = 'none';
+            });
+        }
+
+        renderProductsDashboard();
+        updateCartCount();
+    }
 });

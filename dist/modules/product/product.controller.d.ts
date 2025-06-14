@@ -3,7 +3,7 @@ import { CreateProductDto, UpdateProductDto } from './dtos';
 export declare class ProductController {
     private service;
     constructor(service: ProductService);
-    getAll(): Promise<{
+    getAll(query: any): Promise<{
         message: string;
         data: (import("mongoose").Document<unknown, {}, import("mongoose").Document<unknown, {}, import("./schema").Product, {}> & import("./schema").Product & {
             _id: import("mongoose").Types.ObjectId;
@@ -16,6 +16,12 @@ export declare class ProductController {
         } & Required<{
             _id: import("mongoose").Types.ObjectId;
         }>)[];
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+        };
     }>;
     getById(id: string): Promise<{
         message: string;

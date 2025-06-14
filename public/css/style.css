@@ -127,23 +127,49 @@ a:hover {
 .search-form button:hover {
   background: var(--primary-dark);
 }
+
 .auth-links {
   display: flex;
-  gap: 1rem;
+  gap: 0.4rem;
   align-items: center;
 }
-.auth-links a {
+.auth-links #username {
+  color: var(--primary-dark);
+  font-weight: 600;
+  font-size: 1.03rem;
+  margin-right: 0.3rem;
+  padding: 7px 0 7px 7px;
+  background: none;
+}
+.auth-links .cart-link {
   color: var(--primary);
   background: var(--gray-200);
-  padding: 7px 15px;
+  padding: 7px 13px;
   border-radius: var(--radius-sm);
   font-weight: 500;
   font-size: 1rem;
   transition: var(--transition);
+  margin-right: 0.2rem;
 }
-.auth-links a:hover {
+.auth-links .cart-link:hover {
   background: var(--primary);
   color: var(--white);
+}
+.auth-links .logout-btn {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 7px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-right: 0.3rem;
+}
+.auth-links .logout-btn:hover {
+  background: var(--primary-dark);
+  color: #fff;
 }
 .theme-toggle {
   background: var(--primary);
@@ -290,7 +316,7 @@ a:hover {
   align-items: flex-start;
   margin-bottom: 2rem;
 }
-#product-list {
+#productsGrid, #product-list {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 28px;
@@ -351,7 +377,8 @@ a:hover {
   margin-bottom: 10px;
 }
 .product-card .shop-now,
-.product-card .add-to-cart {
+.product-card .add-to-cart,
+.product-card .add-to-cart-btn {
   margin: 0 14px 14px 14px;
   padding: 8px 0;
   border-radius: 8px;
@@ -367,7 +394,8 @@ a:hover {
   transition: var(--transition);
 }
 .product-card .shop-now:hover,
-.product-card .add-to-cart:hover {
+.product-card .add-to-cart:hover,
+.product-card .add-to-cart-btn:hover {
   background: var(--primary-dark);
   color: #fff;
 }
@@ -457,12 +485,12 @@ footer {
   .container, .banner-container {
     max-width: 99vw;
   }
-  #product-list {
+  #productsGrid, #product-list {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 @media (max-width: 1100px) {
-  #product-list {
+  #productsGrid, #product-list {
     grid-template-columns: repeat(3, 1fr);
   }
   .products-grid {
@@ -490,7 +518,7 @@ footer {
     grid-template-columns: 1fr;
     gap: 1.1rem;
   }
-  #product-list {
+  #productsGrid, #product-list {
     grid-template-columns: repeat(2, 1fr);
     gap: 18px;
   }
@@ -511,7 +539,7 @@ footer {
   .nav-links, .auth-links {
     gap: 0.5rem;
   }
-  #product-list {
+  #productsGrid, #product-list {
     grid-template-columns: 1fr;
     gap: 11px;
   }
@@ -531,10 +559,10 @@ footer {
 }
 
 /* ----- BUTTONS, TAGS, ETC. ----- */
-button, .shop-now, .add-to-cart, .filter-tag {
+button, .shop-now, .add-to-cart, .add-to-cart-btn, .filter-tag {
   outline: none;
 }
-button:focus, .shop-now:focus, .add-to-cart:focus, .filter-tag:focus {
+button:focus, .shop-now:focus, .add-to-cart:focus, .add-to-cart-btn:focus, .filter-tag:focus {
   box-shadow: 0 0 0 2px var(--primary-dark);
 }
 
@@ -564,12 +592,14 @@ body.dark-mode footer {
   box-shadow: 0 2px 18px 0 #1e5d3440;
 }
 body.dark-mode .nav-links a,
-body.dark-mode .auth-links a {
+body.dark-mode .auth-links a,
+body.dark-mode .auth-links .cart-link {
   color: #e4e9ed;
   background: #212b27;
 }
 body.dark-mode .nav-links a:hover,
 body.dark-mode .auth-links a:hover,
+body.dark-mode .auth-links .cart-link:hover,
 body.dark-mode .search-form button {
   background: var(--primary);
   color: #fff;
@@ -587,4 +617,55 @@ body.dark-mode .product-card .price {
 /* ----- BLUR/GHOST EFFECTS (minimal) ----- */
 .products-grid, .banner-container, .filters, .product-card, .banner-caption, .navbar, footer {
   backdrop-filter: blur(0.5px);
+}
+
+/* --- PAGINATION --- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 2.2rem;
+  flex-wrap: wrap;
+}
+.pagination button {
+  background: #f0f4f2;
+  border: none;
+  color: #23272f;
+  font-size: 1.07rem;
+  font-weight: 600;
+  padding: 0.38rem 1.1rem;
+  border-radius: 0.5rem;
+  transition: background 0.17s, color 0.17s;
+  cursor: pointer;
+  min-width: 2.4rem;
+}
+.pagination button[disabled] {
+  background: var(--primary);
+  color: #fff;
+  cursor: default;
+}
+.pagination button:hover:not([disabled]) {
+  background: #b6e2c8;
+  color: var(--primary-dark);
+}
+.pagination-ellipsis {
+  font-size: 1.1rem;
+  color: var(--gray-400);
+  min-width: 2.2rem;
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+  padding: 0 0.1rem;
+}
+@media (max-width: 600px) {
+  .pagination {
+    gap: 0.15rem;
+    margin-top: 1.1rem;
+  }
+  .pagination button {
+    font-size: 1rem;
+    padding: 0.25rem 0.7rem;
+    min-width: 1.8rem;
+  }
 }

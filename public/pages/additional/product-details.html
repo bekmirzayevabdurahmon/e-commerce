@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahsulot tafsilotlari</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <button onclick="window.history.back()" style="margin:1.3rem 0;">&larr; Orqaga</button>
+        <div id="productDetails">
+            <!-- Mahsulot tafsilotlari JS orqali yuklanadi -->
+        </div>
+    </div>
+    <script>
+    // Get product ID from URL
+    function getProductId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    }
+    async function loadProduct() {
+        const id = getProductId();
+        if (!id) return;
+        const res = await fetch(`/products/${id}`);
+        const data = await res.json();
+        const product = data.data;
+        const container = document.getElementById("productDetails");
+        if (!product) {
+            container.innerHTML = "<h2>Mahsulot topilmadi</h2>";
+            return;
+        }
+        const imageUrl =
+            product.images && product.images.length > 0
+                ? `/uploads/products-images/${product._id}/${product.images[0]}`
+                : '/images/default.jpg';
+        container.innerHTML = `
+            <div class="product-details-card">
+                <img src="${imageUrl}" alt="${product.name}" class="product-details-img">
+                <div class="product-details-info">
+                    <h2>${product.name}</h2>
+                    <p><b>Narx:</b> $${product.price?.toFixed(2) || '0.00'}</p>
+                    <p><b>Brend:</b> ${product.brand || '-'}</p>
+                    <p><b>Ta'rif:</b> ${product.description || '-'}</p>
+                    <p><b>Rangi:</b> ${product.color || '-'}</p>
+                    <p><b>RAM:</b> ${product.ram || '-'}</p>
+                    <p><b>Xotira:</b> ${product.storage || '-'}</p>
+                    <p><b>Protsessor:</b> ${product.processor || '-'}</p>
+                    <p><b>Batareya:</b> ${product.battery || '-'}</p>
+                    <p><b>Kamera:</b> ${product.camera || '-'}</p>
+                    <p><b>Selfie kamera:</b> ${product.selfieCamera || '-'}</p>
+                    <button class="add-to-cart-btn" onclick="addToCart()">Savatga qo'shish</button>
+                </div>
+            </div>
+        `;
+    }
+    // Demo purpose (you can improve this part)
+    function addToCart() {
+      alert("Savatga qo'shildi! (Demo)");
+    }
+    loadProduct();
+    </script>
+    <style>
+    .product-details-card {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2.2rem;
+        background: var(--white, #fff);
+        margin-top: 1.3rem;
+        border-radius: 1.2rem;
+        box-shadow: 0 2px 14px 0 #2a7c4f18;
+        padding: 2rem 2.3rem;
+        align-items: flex-start;
+    }
+    .product-details-img {
+        width: 280px;
+        height: 280px;
+        object-fit: cover;
+        border-radius: 1rem;
+        background: #f3f4f7;
+    }
+    .product-details-info {
+        flex: 1;
+        min-width: 260px;
+    }
+    .add-to-cart-btn {
+        background: var(--primary, #2a7c4f);
+        color: #fff;
+        border: none;
+        padding: 12px 32px;
+        margin-top: 1.3rem;
+        border-radius: 0.8rem;
+        font-size: 1.12rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .add-to-cart-btn:hover {
+        background: var(--primary-dark, #1e5d34);
+    }
+    </style>
+</body>
+</html>

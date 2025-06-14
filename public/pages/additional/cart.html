@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopcart | Savat</title>
+    <link rel="stylesheet" href="../../css/additional/cart.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-links">
+                <a href="/pages/dashboards/home.html">Ortga qaytish</a>
+            </div>
+            <div class="auth-links">
+                <span id="username" style="font-weight:600"></span>
+                <a href="/pages/additional/cart.html" class="cart-link active">Savat (<span id="cartCount">0</span>)</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2 style="margin-top:2rem">Savat</h2>
+        <div id="cartEmpty" style="display:none; margin:2rem 0; font-size:1.2rem; color:var(--primary-dark);">
+            Savatda mahsulotlar yo‘q.
+        </div>
+        <div class="cart-table-container">
+            <table class="cart-table" id="cartTable">
+                <thead>
+                    <tr>
+                        <th>Mahsulot</th>
+                        <th>Narx</th>
+                        <th>Soni</th>
+                        <th>Jami</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="cartBody">
+                    <!-- Mahsulotlar JS orqali yuklanadi -->
+                </tbody>
+            </table>
+        </div>
+        <div class="cart-summary" id="cartSummary">
+            <div>
+                <span>Umumiy:</span>
+                <span id="totalPrice">$0.00</span>
+            </div>
+            <button id="checkoutBtn" class="checkout-btn">Buyurtma berish</button>
+        </div>
+    </div>
+    <script src="../../js/additional/cart.js"></script>
+</body>
+</html>
